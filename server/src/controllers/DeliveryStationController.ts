@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import DeliveryStation from '../models/DeliveryStation';
+import Item from '../models/Item';
+import mongoose from 'mongoose';
 
 // Create a new delivery station
 export const createDeliveryStation = async (req: Request, res: Response): Promise<void> => {
@@ -99,6 +101,38 @@ export const deleteDeliveryStation = async (req: Request, res: Response): Promis
             res.status(500).json({ error: 'Failed to delete delivery station', details: err.message });
         } else {
             res.status(500).json({ error: 'Failed to delete delivery station', details: 'Unknown error' });
+        }
+    }
+};
+
+export const addItemToStore = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { deliveryStationId, item } = req.body;  // Accept the full item object
+
+        // Find the delivery station by ID
+        const deliveryStation = await DeliveryStation.findById(deliveryStationId);
+        if (!deliveryStation) {
+            res.status(404).json({ error: 'Delivery station not found' });
+            return;
+        }
+
+        // Create a new item with the provided details
+        const newItem = new Item(item);
+        await newItem.save();  // Save the new item to the database
+
+        // Add the new item to the availableItems array in the delivery station
+        if (!deliveryStation.availableItems.includes(newItem._id as mongoose.Types.ObjectId)) {
+            deliveryStation.availableItems.push(newItem._id as mongoose.Types.ObjectId);
+            await deliveryStation.save();  // Save the updated delivery station
+            res.status(200).json({ message: 'Item added to delivery station successfully', newItem, deliveryStation });
+        } else {
+            res.status(400).json({ error: 'Item already exists in the delivery station' });
+        }
+    } catch (err) {
+        if (err instanceof Error) {
+            res.status(500).json({ error: 'Failed to add item to delivery station', details: err.message });
+        } else {
+            res.status(500).json({ error: 'Failed to add item to delivery station', details: 'Unknown error' });
         }
     }
 };
