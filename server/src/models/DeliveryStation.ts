@@ -1,21 +1,20 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IDeliveryStation extends Document {
-    name: string;
-    location: {
-        type: string;
-        coordinates: [number, number];
-    };
+interface IDeliveryStation extends Document {
+  location: { lat: number, lng: number };
+  availableItems: string[];
+  activeDeliveries: mongoose.Types.ObjectId[];
 }
 
-const DeliveryStationSchema: Schema = new Schema({
-    name: { type: String, required: true },
-    location: {
-        type: { type: String, enum: ['Point'], required: true },
-        coordinates: { type: [Number], required: true },
-    },
+const deliveryStationSchema = new Schema<IDeliveryStation>({
+  location: {
+    lat: { type: Number, required: true },
+    lng: { type: Number, required: true },
+  },
+  availableItems: { type: [String], required: true },
+  activeDeliveries: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
 });
 
-DeliveryStationSchema.index({ location: '2dsphere' });
+const DeliveryStation = mongoose.model<IDeliveryStation>('DeliveryStation', deliveryStationSchema);
 
-export default mongoose.model<IDeliveryStation>('DeliveryStation', DeliveryStationSchema);
+export default DeliveryStation;
