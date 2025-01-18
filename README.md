@@ -12,21 +12,6 @@ This project contains files for creating an animated login and signup page using
 
 You can view the hosted webpage [here](https://animated-login-signup-page-hazel.vercel.app/).
 
-## How to Use
-
-To use the animated login and signup page:
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/NushaMBZ/Animated-Login-Signup-Page.git
-```
-
-2. Navigate into the project directory:
-```bash
-cd Animated-Login-Signup-Page
-```
-3. Open the `index.html` file in a web browser.
 
 ## Screenshot
 Here we have project screenshot :
