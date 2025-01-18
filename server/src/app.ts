@@ -3,9 +3,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import routes from './routes/index';
 import { connectDB } from './config/db';
-// import { errorHandler } from './middlewares/errorHandler';
-import socketSetup from './sockets';
 import authRoutes from './routes/authRoutes';
+// import { errorHandler } from './middlewares/errorHandler';
 
 const app: Application = express();
 
@@ -20,14 +19,8 @@ connectDB();
 // Routes
 app.use('/api', routes);
 app.use('/api/auth', authRoutes);
-// Error Handling
+
+// Error Handling Middleware (if implemented)
 // app.use(errorHandler);
-
-// Socket Setup
-const server = app.listen(process.env.PORT || 5050, () => {
-    console.log(`Server running on http://localhost:${process.env.PORT || 5050}`);
-});
-
-socketSetup(server);
 
 export default app;

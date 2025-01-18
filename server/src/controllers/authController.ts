@@ -97,8 +97,8 @@ export const loginUser = async (req: LoginRequest, res: Response): Promise<void>
         process.env.JWT_SECRET as string ||"abcd", 
         { expiresIn: process.env.JWT_EXPIRY || '1h' } // Use environment variable for token expiry
       );
-  
-      res.status(200).json({ token });
+      
+      res.status(200).json({ token , id: user._id});
     } catch (error) {
       console.log(error); // Log the error for debugging
       res.status(500).json({ message: 'Server error' });

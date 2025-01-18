@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, ArrowRight, Github, Twitter } from "lucide-react";
-
+import { jwtDecode } from "jwt-decode";
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
@@ -16,27 +16,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   // Request user location on component mount
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setFormData((prev) => ({
-            ...prev,
-            currentLocation: {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            },
-          }));
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          alert("Please enable location services to use this feature.");
-        }
-      );
-    } else {
-      alert("Geolocation is not supported by your browser.");
-    }
-  }, []);
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -57,7 +37,18 @@ export default function LoginPage() {
 
       if (response.ok) {
         const data = await response.json();
+         // Decode the token to get the user ID
+         const decodedToken = jwtDecode(data.token);
+         const userId = decodedToken.userId; // Extract userId from the token
+         console.log("Decoded User ID:", userId);
+ 
+         // Store the token and userId in localStorage
+         localStorage.setItem("token", data.token);
+         localStorage.setItem("userId", userId);
+        console.log(data)
         alert("Login successful!");
+        // localStorage.setItem("token", data.token);
+        // localStorage.setItem("userId", data.id);
         router.push("/dashboard"); // Redirect to dashboard
       } else {
         const error = await response.json();

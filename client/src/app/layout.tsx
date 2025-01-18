@@ -1,23 +1,12 @@
-import '../styles/globals.css';
-import { Sidebar } from '@/components/Layout/Sidebar';
-import { TopBar } from '@/components/Layout/TopBar';
+// app/layout.tsx
 
-export const metadata = {
-  title: 'TrafficRelief',
-  description: 'Smart traffic management and relief system',
-};
+import { SocketProvider } from "@/lib/socketcontext";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-            <main className=" ">
-              {children}
-            </main>
+        <SocketProvider>{children}</SocketProvider>
       </body>
     </html>
   );

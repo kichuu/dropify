@@ -25,6 +25,7 @@ export default function RootLayout({
           <div className="flex-1 min-h-screen ml-0 lg:ml-64">
             <TopBar currentLocation="📍 Downtown Seattle, 5th Avenue" />
             <main className="p-6 max-w-7xl mx-auto">
+              
               {children}
             </main>
           </div>
