@@ -1,21 +1,87 @@
-import React from "react"
-import Link from "next/link"
-import { Mail, Lock, ArrowRight, Github, Twitter } from "lucide-react"
+"use client"
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Mail, Lock, ArrowRight, Github, Twitter } from "lucide-react";
 
 export default function LoginPage() {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    role: "user", // Default role
+    currentLocation: { lat: 0, lng: 0 }, // Default location
+  });
+
+  const [loading, setLoading] = useState(false); // For button loading state
+  const router = useRouter();
+
+  // Request user location on component mount
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData((prev) => ({
+            ...prev,
+            currentLocation: {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            },
+          }));
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          alert("Please enable location services to use this feature.");
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true); // Start loading
+    console.log("Form Data Submitted:", formData);
+    try {
+      const response = await fetch("http://localhost:5050/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert("Login successful!");
+        router.push("/dashboard"); // Redirect to dashboard
+      } else {
+        const error = await response.json();
+        alert(error.message || "Login failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center  p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Main Card */}
         <div className="bg-zinc-900 rounded-xl p-8 border border-zinc-800 shadow-xl backdrop-blur-sm">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold mb-2">Welcome back</h2>
-            <p className="text-zinc-400">
-              Sign in to continue to TrafficRelief
-            </p>
+            <p className="text-zinc-400">Sign in to continue to TrafficRelief</p>
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-zinc-400 mb-1.5">
@@ -24,8 +90,12 @@ export default function LoginPage() {
               <div className="relative">
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 pl-11 focus:outline-none focus:border-purple-500 transition-colors"
                   placeholder="name@example.com"
+                  required
                 />
                 <Mail
                   className="absolute left-4 top-3.5 text-zinc-500"
@@ -49,8 +119,12 @@ export default function LoginPage() {
               <div className="relative">
                 <input
                   type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 pl-11 focus:outline-none focus:border-purple-500 transition-colors"
                   placeholder="••••••••"
+                  required
                 />
                 <Lock
                   className="absolute left-4 top-3.5 text-zinc-500"
@@ -58,70 +132,39 @@ export default function LoginPage() {
                 />
               </div>
             </div>
+            {/* Role Selection */}
+            <div>
+              <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+                Select Role
+              </label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500 transition-colors"
+                required
+              >
+                <option value="user">User</option>
+                <option value="delivery">Delivery</option>
+              </select>
+            </div>
             {/* Sign In Button */}
             <button
               type="submit"
               className="w-full bg-purple-500 text-white rounded-lg px-4 py-3 font-medium hover:bg-purple-600 transition-colors flex items-center justify-center group"
+              disabled={loading} // Disable button while loading
             >
-              Sign in
-              <ArrowRight
-                className="ml-2 group-hover:translate-x-1 transition-transform"
-                size={18}
-              />
+              {loading ? "Signing in..." : "Sign in"}
+              {!loading && (
+                <ArrowRight
+                  className="ml-2 group-hover:translate-x-1 transition-transform"
+                  size={18}
+                />
+              )}
             </button>
           </form>
-
-          {/* Divider */}
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-zinc-800"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-zinc-900 text-zinc-400">
-                Or continue with
-              </span>
-            </div>
-          </div>
-
-          {/* Social Logins */}
-          <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center px-4 py-3 border border-zinc-700 rounded-lg hover:bg-zinc-800/50 transition-colors">
-              <Github size={18} className="mr-2" />
-              <span>Github</span>
-            </button>
-            <button className="flex items-center justify-center px-4 py-3 border border-zinc-700 rounded-lg hover:bg-zinc-800/50 transition-colors">
-              <Twitter size={18} className="mr-2" />
-              <span>Twitter</span>
-            </button>
-          </div>
-
-          {/* Sign Up Link */}
-          <p className="mt-8 text-center text-sm text-zinc-400">
-            Don't have an account?{" "}
-            <Link
-              href="/auth/signup"
-              className="text-purple-400 hover:text-purple-300 font-medium"
-            >
-              Sign up
-            </Link>
-          </p>
         </div>
-
-        {/* Footer */}
-        <p className="mt-8 text-center text-sm text-zinc-400">
-          By signing in, you agree to our{" "}
-          <Link href="/terms" className="text-purple-400 hover:text-purple-300">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link
-            href="/privacy"
-            className="text-purple-400 hover:text-purple-300"
-          >
-            Privacy Policy
-          </Link>
-        </p>
       </div>
     </div>
-  )
+  );
 }
