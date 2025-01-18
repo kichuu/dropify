@@ -5,6 +5,7 @@ import routes from './routes/index';
 import { connectDB } from './config/db';
 // import { errorHandler } from './middlewares/errorHandler';
 import socketSetup from './sockets';
+import authRoutes from './routes/authRoutes';
 
 const app: Application = express();
 
@@ -18,7 +19,7 @@ connectDB();
 
 // Routes
 app.use('/api', routes);
-
+app.use('/api/auth', authRoutes);
 // Error Handling
 // app.use(errorHandler);
 

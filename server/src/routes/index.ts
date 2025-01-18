@@ -6,6 +6,7 @@ import userRoutes from './UserRoutes';
 import orderRoutes from './OrderRoutes';
 import trafficUpdateRoutes from './TrafficUpdateRoutes';
 import transportRequestRoutes from './TransportRequestRoutes';
+import authRoutes from './authRoutes';
 
 
 // import transportRoutes from './transport';
@@ -13,6 +14,8 @@ import transportRequestRoutes from './TransportRequestRoutes';
 
 const router: Router = Router();
 router.use('/orders', orderRoutes);
+router.use('/api/auth', authRoutes);
+
 router.use('/users', userRoutes);
 router.use('/traffic-updates', trafficUpdateRoutes);
 router.use('/transport-requests', transportRequestRoutes);
