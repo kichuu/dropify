@@ -48,7 +48,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
                     mode: vehicleType === 'bicycle' ? 'walking' : 'driving', // Use walking for bicycle
                 });
 
-                const element = distanceMatrixResponse.rows[0].elements[0];
+                const element = (distanceMatrixResponse as any).rows[0].elements[0];
                 if (element && element.duration) {
                     const travelTime = element.duration.value; // Time in seconds
                     adjustedTravelTime = vehicleType === 'bicycle' ? travelTime / 2 : travelTime;
