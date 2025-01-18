@@ -18,7 +18,7 @@ const deliveryPersonnelSchema = new Schema<IDeliveryPersonnel>({
   assignedOrders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
   status: {
     type: String,
-    enum: ['active', 'busy', 'offline'], // Restrict to specific values
+    enum: ['active', 'busy', 'offline'], // Restrict to specific values     
     default: 'active', // Default status
   },
 });

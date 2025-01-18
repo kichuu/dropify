@@ -12,7 +12,7 @@ export const createTransportRequest = async (req: Request, res: Response): Promi
             dropOffLocation,
             vehicleStatus: 'pending',  // Default status
         });
-
+        
         await newTransportRequest.save();
         res.status(201).json({ message: 'Transport request created successfully', newTransportRequest });
     } catch (err) {
