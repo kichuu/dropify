@@ -23,8 +23,8 @@ app.use('/api', routes);
 // app.use(errorHandler);
 
 // Socket Setup
-const server = app.listen(process.env.PORT || 5000, () => {
-    console.log(`Server running on http://localhost:${process.env.PORT || 5000}`);
+const server = app.listen(process.env.PORT || 5050, () => {
+    console.log(`Server running on http://localhost:${process.env.PORT || 5050}`);
 });
 
 socketSetup(server);
