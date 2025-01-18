@@ -1,5 +1,4 @@
-// app/layout.tsx
-
+import "../styles/globals.css"
 import { SocketProvider } from "@/lib/socketcontext";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
