@@ -14,7 +14,6 @@ export const Sidebar = () => {
     { icon: Package, label: 'Deliveries', href: '/dashboard/deliveries' },
     { icon: Bike, label: 'Transport', href: '/dashboard/transport' },
     { icon: Brain, label: 'AI Assistant', href: '/dashboard/ai' },
-    { icon: Briefcase, label: 'Work Hub', href: '/dashboard/work' },
     { icon: AlertCircle, label: 'Emergency', href: '/dashboard/emergency' },
     { icon: Leaf, label: 'Impact', href: '/dashboard/impact' },
   ];

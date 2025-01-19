@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
-const JWT_EXPIRATION = '1h'; // Token expiration time
+const JWT_SECRET = 'abcd';
+const JWT_EXPIRATION = '7d'; // Token expiration time
 
 // Function to generate JWT
 export const generateToken = (id: string, role: string) => {

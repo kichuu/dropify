@@ -1,8 +1,35 @@
-import React from 'react';
-import { CheckCircle, Bike, Clock, MapPin, ChevronRight, QrCode } from 'lucide-react';
-import Link from 'next/link';
+"use client";
+import React, { useEffect, useState } from "react";
+import { CheckCircle, Bike, Clock, MapPin, QrCode } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation"; // Correct import for useRouter in the app directory
 
 export default function ConfirmationPage() {
+  const router = useRouter(); // Initialize the router
+  const [isMounted, setIsMounted] = useState(false); // State to track if component is mounted
+  const [currentTime, setCurrentTime] = useState(""); // State to store current time
+
+  useEffect(() => {
+    setIsMounted(true); // Set mounted to true after the component is mounted
+
+    // Update the current time when the component mounts
+    const now = new Date();
+    const formattedTime = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    setCurrentTime(formattedTime);
+  }, []);
+
+  if (!isMounted) {
+    return null; // Return nothing until mounted
+  }
+
+  // Destructure the query parameters safely
+  const searchParams = new URLSearchParams(window.location.search);
+  const vehicleName = searchParams.get("name") || "N/A";
+  const vehiclePrice = searchParams.get("price") || "$0.00";
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800 text-center">
@@ -13,7 +40,7 @@ export default function ConfirmationPage() {
         </div>
         <h1 className="text-2xl font-bold mb-2">Booking Confirmed!</h1>
         <p className="text-zinc-400 mb-6">Your vehicle is ready for pickup</p>
-        
+
         <div className="space-y-4 text-left mb-8">
           <div className="p-4 bg-zinc-800/50 rounded-lg">
             <div className="flex items-center space-x-3 mb-3">
@@ -27,11 +54,11 @@ export default function ConfirmationPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-zinc-400">Vehicle Type</span>
-                <span>Electric Bike</span>
+                <span>{vehicleName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-400">Duration</span>
-                <span>1 hour</span>
+                <span className="text-zinc-400">Price</span>
+                <span>{vehiclePrice}</span>
               </div>
             </div>
           </div>
@@ -44,11 +71,7 @@ export default function ConfirmationPage() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-zinc-400">Start Time</span>
-                <span>2:00 PM</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-zinc-400">End Time</span>
-                <span>3:00 PM</span>
+                <span>{currentTime}</span>
               </div>
             </div>
           </div>
@@ -58,7 +81,7 @@ export default function ConfirmationPage() {
               <MapPin className="text-green-400" size={20} />
               <h2 className="font-bold">Pickup Location</h2>
             </div>
-            <p className="text-zinc-400">123 Main St, Seattle, WA 98101</p>
+            <p className="text-zinc-400">Current Location</p>
           </div>
 
           <div className="p-4 bg-zinc-800/50 rounded-lg">
@@ -74,13 +97,6 @@ export default function ConfirmationPage() {
         </div>
 
         <div className="flex flex-col space-y-3">
-          <Link
-            href="/quick-actions/book-transport/active-rental"
-            className="w-full px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center"
-          >
-            View Active Rental
-            <ChevronRight size={20} className="ml-2" />
-          </Link>
           <Link
             href="/quick-actions/book-transport"
             className="text-zinc-400 hover:text-white transition-colors"

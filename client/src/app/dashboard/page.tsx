@@ -46,7 +46,7 @@ export default function HomePage() {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      console.log(data, "hi")
+      console.log(data.name)
       if (data.main) {
         setUserData((prev) => ({
           ...prev,
@@ -147,7 +147,7 @@ export default function HomePage() {
   }
 
   return (
-    <Dashboard
+    <Dashboard 
       estimatedReliefTime={userData.estimatedReliefTime}
       currentLocation={userData.currentLocation}
       carbonSaved={userData.carbonSaved}

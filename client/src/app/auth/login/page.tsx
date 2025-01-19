@@ -1,8 +1,8 @@
 "use client"
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Mail, Lock, ArrowRight, Github, Twitter } from "lucide-react";
+import { Mail, Lock, ArrowRight,  } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -39,12 +39,10 @@ export default function LoginPage() {
         const data = await response.json();
          // Decode the token to get the user ID
          const decodedToken = jwtDecode(data.token);
-         const userId = decodedToken.userId; // Extract userId from the token
-         console.log("Decoded User ID:", userId);
- 
+       
+
          // Store the token and userId in localStorage
          localStorage.setItem("token", data.token);
-         localStorage.setItem("userId", userId);
         console.log(data)
         alert("Login successful!");
         // localStorage.setItem("token", data.token);

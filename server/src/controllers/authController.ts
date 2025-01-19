@@ -94,7 +94,7 @@ export const loginUser = async (req: LoginRequest, res: Response): Promise<void>
   
       const token = jwt.sign(
         { userId: user._id, role: role }, // Include role in token payload
-        process.env.JWT_SECRET as string ||"abcd", 
+        "abcd", 
         { expiresIn: process.env.JWT_EXPIRY || '1h' } // Use environment variable for token expiry
       );
       
