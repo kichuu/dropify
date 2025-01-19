@@ -145,7 +145,7 @@ For any questions or suggestions, feel free to contact us:
 
 ## Links
 
-- **Deployed Application:** [Traffic Relief Dashboard](https://fsd-group-14-5418-m0cm9gx33-kichuus-projects.vercel.app/)
+- **Deployed Application:** [Traffic Relief Dashboard](https://fsd-group-14-5418.vercel.app/)
 - **Presentation:** [Google Drive](https://drive.google.com/file/d/1q1hVFQSRpvuVZmu6ksvoAii-zD_7JNsR/view?usp=sharing)
 
 ---
