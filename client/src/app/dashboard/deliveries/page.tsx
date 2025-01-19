@@ -1,8 +1,12 @@
 "use client"
 import React, { useState, useEffect } from "react"
-import { Clock } from "lucide-react"
+import { Clock, Package, X } from 'lucide-react'
 import dynamic from "next/dynamic"
 import routes from "@/lib/api/routes"
+import "leaflet/dist/leaflet.css"
+import { PulsingDot, FadeInSection } from '@/components/ui/custom-components'
+import { motion, AnimatePresence } from 'framer-motion'
+
 
 // Dynamically import the necessary components from react-leaflet
 const MapContainer = dynamic(
@@ -23,11 +27,15 @@ const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
 
 export default function Deliveries() {
   const [mapCenter, setMapCenter] = useState<[number, number]>([51.505, -0.09]) // Default center
-  const [userLocation, setUserLocation] = useState<string>("Fetching location...")
+  const [userLocation, setUserLocation] = useState<string>(
+    "Fetching location..."
+  )
   const [activeOrders, setActiveOrders] = useState<any[]>([])
   const [pastOrders, setPastOrders] = useState<any[]>([])
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null)
-  const [deliveryPersonLocation, setDeliveryPersonLocation] = useState<any | null>(null)
+  const [deliveryPersonLocation, setDeliveryPersonLocation] = useState<
+    any | null
+  >(null)
 
   // Fetch user's location on mount
   useEffect(() => {
@@ -36,7 +44,9 @@ export default function Deliveries() {
         (position) => {
           const { latitude, longitude } = position.coords
           setMapCenter([latitude, longitude])
-          setUserLocation(`Lat: ${latitude.toFixed(2)}, Lon: ${longitude.toFixed(2)}`)
+          setUserLocation(
+            `Lat: ${latitude.toFixed(2)}, Lon: ${longitude.toFixed(2)}`
+          )
         },
         (error) => {
           console.error("Error fetching location:", error)
@@ -77,9 +87,6 @@ export default function Deliveries() {
         try {
           const deliveryPerson = await selectedOrder.deliveryPersonId
           setDeliveryPersonLocation(deliveryPerson.currentLocation)
-          // Console log for delivery person's details and location
-          console.log("Delivery Person Details:", deliveryPerson)
-          console.log("Delivery Person's Current Location:", deliveryPerson.currentLocation)
         } catch (error) {
           console.error("Error fetching delivery person location:", error)
         }
@@ -87,8 +94,6 @@ export default function Deliveries() {
       fetchDeliveryPersonLocation()
     }
   }, [selectedOrder])
-  console.log("selectedOrder:", selectedOrder)
-  console.log("deliveryPersonLocation:", deliveryPersonLocation)
   // Handle order click
   const handleOrderClick = (orderId: string) => {
     const order = activeOrders.find((order) => order._id === orderId)
@@ -100,108 +105,138 @@ export default function Deliveries() {
       <div className="container mx-auto px-6 py-12">
         <div className="space-y-6">
           {/* Active Orders Section */}
-          <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-            <h2 className="text-2xl font-bold mb-6">Active Orders</h2>
-            <div className="space-y-4">
-              {activeOrders.map((order) => (
-                <div
-                  key={order._id}
-                  className="flex items-center justify-between p-4 bg-zinc-800/50 rounded-lg cursor-pointer"
-                  onClick={() => handleOrderClick(order._id)} // Add onClick handler
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="p-2 bg-purple-500/20 rounded-lg"></div>
-                    <div>
-                      <h3 className="font-medium">{order.items.join(", ")}</h3>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">
-                      {new Date(order.estimatedDeliveryTime).toLocaleTimeString()}
-                    </p>
-                    <p className="text-sm text-zinc-400">{order.orderStatus}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Past Orders */}
-            <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-              <h3 className="text-xl font-bold mb-4">Past Orders</h3>
-              <div className="space-y-3">
-                {pastOrders.map((order) => (
-                  <div
+          <FadeInSection>
+            <div className="bg-zinc-800/50 backdrop-blur-sm rounded-xl p-6 border border-zinc-700 shadow-lg">
+              <h2 className="text-3xl font-bold mb-6 text-purple-300">Active Orders</h2>
+              <div className="space-y-4">
+                {activeOrders.map((order) => (
+                  <motion.div
                     key={order._id}
-                    className="flex items-center justify-between p-3 hover:bg-zinc-800/50 rounded-lg transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex items-center justify-between p-4 bg-zinc-700/50 rounded-lg cursor-pointer transition-all duration-300 hover:bg-zinc-600/50"
+                    onClick={() => handleOrderClick(order._id)}
                   >
-                    <div>
-                      <h4 className="font-medium">{order.name}</h4>
-                      <p className="text-sm text-zinc-400">
-                        {new Date(order.date).toLocaleDateString()}
+                    <div className="flex items-center space-x-4">
+                      <div className="p-2 bg-purple-500/20 rounded-lg">
+                        <Package className="text-purple-400" size={24} />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-lg">#{order._id.substring(0, 8)}</h3>
+                        <p className="text-sm text-zinc-400">{order.items.join(", ")}</p>
+                      </div>
+                    </div>
+                    <div className="text-right flex items-center space-x-2">
+                      <p className="font-medium text-purple-300">
+                        {new Date(order.estimatedDeliveryTime).toLocaleTimeString()}
                       </p>
-                      <ul className="text-sm text-zinc-300 mt-2">
-                        {order.items.map((item: any, index: any) => (
-                          <li key={index} className="list-disc pl-5">
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
+                      <PulsingDot />
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Clock className="text-yellow-400" size={16} />
-                    </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
+          </FadeInSection>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Past Orders */}
+            <FadeInSection>
+              <div className="bg-zinc-800/50 backdrop-blur-sm rounded-xl p-6 border border-zinc-700 shadow-lg">
+                <h3 className="text-2xl font-bold mb-4 text-purple-300">Past Orders</h3>
+                <div className="space-y-3">
+                  {pastOrders.map((order) => (
+                    <motion.div
+                      key={order._id}
+                      whileHover={{ scale: 1.02 }}
+                      className="flex items-center justify-between p-3 hover:bg-zinc-700/50 rounded-lg transition-all duration-300"
+                    >
+                      <div>
+                        <h4 className="font-medium text-lg">#{order._id.substring(0, 8)}</h4>
+                        <p className="text-sm text-zinc-400">
+                          {new Date(order.date).toLocaleDateString()}
+                        </p>
+                        <p className="text-sm text-zinc-400">{order.items.join(", ")}</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Clock className="text-purple-400" size={20} />
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </FadeInSection>
           </div>
 
           {/* Order Details Modal with Map */}
-          {selectedOrder && (
-            <div className="bg-zinc-800/90 fixed inset-0 z-10 flex items-center justify-center">
-              <div className="bg-zinc-900 p-6 rounded-lg max-w-2xl w-full">
-                <h2 className="text-2xl font-bold mb-4">Order Details</h2>
-                <p className="font-medium">Order ID: {selectedOrder._id}</p>
-                <p className="font-medium">Items: {selectedOrder.items.join(", ")}</p>
-                <p className="font-medium">Status: {selectedOrder.orderStatus}</p>
-                <p className="font-medium">Estimated Delivery: {new Date(selectedOrder.estimatedDeliveryTime).toLocaleTimeString()}</p>
-                
-                {/* Displaying map in modal */}
-                <div className="aspect-video rounded-lg overflow-hidden mt-4">
-                  <MapContainer
-                    center={mapCenter}
-                    zoom={13}
-                    style={{ height: "100%", width: "100%" }}
-                    className="rounded-lg"
-                  >
-                    <TileLayer
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    />
-                    <Marker position={mapCenter}>
-                      <Popup>{userLocation}</Popup>
-                    </Marker>
-                    {deliveryPersonLocation && (
-                      <Marker position={[deliveryPersonLocation.lat, deliveryPersonLocation.lng]}>
-                        <Popup>Delivery Personnel</Popup>
-                      </Marker>
-                    )}
-                  </MapContainer>
-                </div>
-
-                <button
-                  onClick={() => setSelectedOrder(null)} // Close the modal
-                  className="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg"
+          <AnimatePresence>
+            {selectedOrder && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+              >
+                <motion.div
+                  initial={{ scale: 0.9, y: 20 }}
+                  animate={{ scale: 1, y: 0 }}
+                  exit={{ scale: 0.9, y: 20 }}
+                  className="bg-zinc-800/90 p-6 rounded-2xl max-w-2xl w-full shadow-2xl border border-zinc-600"
                 >
-                  Close
-                </button>
-              </div>
-            </div>
-          )}
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-3xl font-bold text-purple-300">Order Details</h2>
+                    <button
+                      onClick={() => setSelectedOrder(null)}
+                      className="text-zinc-400 hover:text-white transition-colors"
+                    >
+                      <X size={24} />
+                    </button>
+                  </div>
+                  <div className="space-y-4 mb-6">
+                    <p className="font-medium text-lg">Order ID: <span className="text-purple-300">#{selectedOrder._id}</span></p>
+                    <p className="font-medium text-lg">Items: <span className="text-zinc-300">{selectedOrder.items.join(", ")}</span></p>
+                    <p className="font-medium text-lg">Status: <span className="text-green-400">{selectedOrder.orderStatus}</span></p>
+                    <p className="font-medium text-lg">
+                      Estimated Delivery:{" "}
+                      <span className="text-purple-300">
+                        {new Date(selectedOrder.estimatedDeliveryTime).toLocaleTimeString()}
+                      </span>
+                    </p>
+                  </div>
+
+                  {/* Displaying map in modal */}
+                  <div className="aspect-video rounded-xl overflow-hidden mt-6 border border-zinc-600 shadow-lg">
+                    <MapContainer
+                      center={mapCenter}
+                      zoom={13}
+                      style={{ height: "100%", width: "100%" }}
+                      className="rounded-xl"
+                    >
+                      <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      />
+                      <Marker position={mapCenter}>
+                        <Popup>{userLocation}</Popup>
+                      </Marker>
+                      {deliveryPersonLocation && (
+                        <Marker
+                          position={[
+                            deliveryPersonLocation.lat,
+                            deliveryPersonLocation.lng,
+                          ]}
+                        >
+                          <Popup>Delivery Personnel</Popup>
+                        </Marker>
+                      )}
+                    </MapContainer>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
   )
 }
+
