@@ -67,7 +67,7 @@ export const AIAssistant: React.FC = () => {
             { message: userInput, type: 'user', coordinates: { latitude, longitude } },
           ]);
           console.log(userInput)
-          generateContent(userInput +"my cordinates are"+latitude+longitude); // Send the user input and coordinates to Gemini API
+          generateContent(userInput); // Send the user input and coordinates to Gemini API
           setUserInput('');
         },
         (error) => {

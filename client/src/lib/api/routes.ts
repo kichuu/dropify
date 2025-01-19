@@ -1,8 +1,7 @@
 const API_BASE_URL =
   process.env.NODE_ENV === "production"
     ? process.env.BACKEND_URL // Production API URL
-    : "https://fsd-group-14-5418.onrender.com/api"
-
+    : "http://localhost:5050/api"
 // Define types for each model
 type DeliveryPersonnel = {
   id: string
@@ -57,19 +56,20 @@ type TrafficUpdate = {
   timestamp: Date
 }
 
-type TransportRequest = {
-  id: string
+export type TransportRequest = {
+  _id: string
   userId: string // User ID
   vehicleType: string
   dropOffLocation: { lat: number; lng: number }
   vehicleStatus: "pending" | "in transit" | "delivered"
 }
 
-type User = {
+export type User = {
   id: string
   name: string
   email: string
   phoneNumber: string
+  greentip: number;
   currentLocation: { lat: number; lng: number }
   preferences: {
     food: string[]

@@ -2,14 +2,15 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Navigation, Package, Bike, Brain, AlertCircle, Leaf, X, Menu, UserIcon } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Navigation, Package, Bike, Brain, AlertCircle, Leaf, X, Menu, UserIcon, LogOut } from 'lucide-react';
 import routes, { User } from "@/lib/api/routes";
 
 export const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Start with the sidebar closed on mobile
   const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
+  const router = useRouter(); // To handle redirection
 
   const route = [
     { icon: Navigation, label: 'Dashboard', href: '/dashboard' },
@@ -33,6 +34,12 @@ export const Sidebar = () => {
   }, []);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  const handleLogout = () => {  
+    localStorage.removeItem('token'); // Remove token
+    localStorage.removeItem('userId'); // Remove userId
+    router.push('/'); // Redirect to home page
+  };
 
   return (
     <div
@@ -78,6 +85,17 @@ export const Sidebar = () => {
               <p className="text-sm text-zinc-400">{user ? user.email : 'Not logged in'}</p>
             </div>
           </div>
+
+          {/* Logout Button */}
+          {user && (
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all hover:bg-white/5 mt-6"
+            >
+              <LogOut size={20} />
+              <span>Logout</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

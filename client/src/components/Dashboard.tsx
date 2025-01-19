@@ -57,7 +57,7 @@
     carbonSaved,
   }) => {
 
-    const [mapCenter, setMapCenter] = useState<[number, number]>([51.505, -0.09])
+    const [mapCenter, setMapCenter] = useState<[number, number]>([0, 0])
 
     const router = useRouter()
     const actions = [

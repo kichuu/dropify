@@ -1,18 +1,27 @@
 import { Request, Response } from 'express';
 import TransportRequest from '../models/TransportRequest';
+import User from '../models/User';
 
 // Create a new transport request
 export const createTransportRequest = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { userId, vehicleType, dropOffLocation } = req.body;
-
+        
+        const activeRental = await TransportRequest.findOne({ userId: req.body.decoded.userId, vehicleStatus: 'pending' });
+        if (activeRental) {
+            res.status(400).json({ error: 'You already have an active rental' });
+            return;
+            
+        }
+        const {  vehicleType, dropOffLocation } = req.body;
+        const userId = req.body.decoded.userId;
         const newTransportRequest = new TransportRequest({
             userId,
             vehicleType,
             dropOffLocation,
             vehicleStatus: 'pending',  // Default status
+            
         });
-        
+         await User.findByIdAndUpdate(userId, { $inc: { greentip: 1 } }, { new: true });
         await newTransportRequest.save();
         res.status(201).json({ message: 'Transport request created successfully', newTransportRequest });
     } catch (err) {
@@ -27,7 +36,9 @@ export const createTransportRequest = async (req: Request, res: Response): Promi
 // Get all transport requests
 export const getAllTransportRequests = async (req: Request, res: Response): Promise<void> => {
     try {
-        const transportRequests = await TransportRequest.find().populate('userId');
+        const id = req.body.decoded.userId;
+
+        const transportRequests = await TransportRequest.find({ userId: id})
         res.status(200).json(transportRequests);
     } catch (err) {
         if (err instanceof Error) {

@@ -30,7 +30,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 // Get all users
 export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
     try {
-        const users = await User.find();
+        const users = await User.find().sort({ carbonFootprintReduction: -1 }).limit(5);
         res.status(200).json(users);
     } catch (err) {
         if (err instanceof Error) {

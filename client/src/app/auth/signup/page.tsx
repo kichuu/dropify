@@ -2,11 +2,29 @@
 
 import DeliverySignup from '@/components/DeliverySignup';
 import UserSignup from '@/components/UserSignup';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
 
 export default function SignupPage() {
   const [isUserSignup, setIsUserSignup] = useState(true);
+  const router = useRouter();
+
+  // Check if the user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        if (decodedToken) {
+          router.push("/dashboard"); // Redirect to dashboard if already logged in
+        }
+      } catch (err) {
+        console.error("Invalid token", err);
+      }
+    }
+  }, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 overflow-hidden">
