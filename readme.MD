@@ -141,9 +141,13 @@ For any questions or suggestions, feel free to contact us:
 - **Email:** support@trafficreliefdashboard.com
 - **GitHub Issues:** [GitHub Issues Page](https://github.com/yourusername/traffic-relief-dashboard/issues)
 
+---
 
-##deployed link : https://fsd-group-14-5418-m0cm9gx33-kichuus-projects.vercel.app/
-##presentation : https://drive.google.com/file/d/1q1hVFQSRpvuVZmu6ksvoAii-zD_7JNsR/view?usp=sharing
+## Links
+
+- **Deployed Application:** [Traffic Relief Dashboard](https://fsd-group-14-5418-m0cm9gx33-kichuus-projects.vercel.app/)
+- **Presentation:** [Google Drive](https://drive.google.com/file/d/1q1hVFQSRpvuVZmu6ksvoAii-zD_7JNsR/view?usp=sharing)
+
 ---
 
 Transform your traffic experience with the **Traffic Relief Dashboard**!
