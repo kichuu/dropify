@@ -143,7 +143,7 @@ For any questions or suggestions, feel free to contact us:
 
 
 deployed link : https://fsd-group-14-5418-m0cm9gx33-kichuus-projects.vercel.app/
-presentation : https://drive.google.com/drive/folders/1bGZygIQpi5X9lVCckM2KlqyKr2U9bVlV?usp=sharing
+presentation : https://drive.google.com/file/d/1q1hVFQSRpvuVZmu6ksvoAii-zD_7JNsR/view?usp=sharing
 ---
 
 Transform your traffic experience with the **Traffic Relief Dashboard**!
