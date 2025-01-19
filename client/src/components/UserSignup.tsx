@@ -47,7 +47,7 @@ export default function UserSignup() {
     <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800 shadow-xl backdrop-blur-sm flex-grow">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-2">Create your account</h2>
-        <p className="text-zinc-400">Start your journey with TrafficRelief</p>
+        <p className="text-zinc-400">Start your journey with Dropify</p>
       </div>
 
       <form className="space-y-6" onSubmit={handleSubmit}>

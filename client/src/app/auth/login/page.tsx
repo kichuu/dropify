@@ -67,7 +67,7 @@ export default function LoginPage() {
         <div className="bg-zinc-900 rounded-xl p-8 border border-zinc-800 shadow-xl backdrop-blur-sm">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold mb-2">Welcome back</h2>
-            <p className="text-zinc-400">Sign in to continue to TrafficRelief</p>
+            <p className="text-zinc-400">Sign in to continue to Dropify</p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
