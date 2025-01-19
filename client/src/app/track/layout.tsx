@@ -2,7 +2,7 @@ import '../../styles/globals.css';
 
 
 export const metadata = {
-  title: 'TrafficRelief',
+  title: 'Dropify',
   description: 'Smart traffic management and relief system',
 };
 
