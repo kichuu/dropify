@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, ArrowRight } from "lucide-react";
@@ -18,20 +18,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false); // For button loading state
   const router = useRouter();
 
-  // Check if the user is already logged in
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        if (decodedToken) {
-          router.push("/dashboard"); // Redirect to dashboard if already logged in
-        }
-      } catch (err) {
-        console.error("Invalid token", err);
-      }
-    }
-  }, [router]);
+ 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
