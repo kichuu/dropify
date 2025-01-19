@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // Import useRouter hook
 import { 
   ArrowRight, Clock, MapPin, Leaf, Shield, Zap, Users, Menu, X,
   ArrowUpRight, ChevronRight, Globe, Sparkles, Timer, Package, Car
@@ -19,6 +20,8 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+ 
+
   return (
     <div className="min-h-screen bg-black">
       {/* Navbar */}
@@ -28,7 +31,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-              TrafficRelief
+              Dropify
             </Link>
 
             {/* Desktop Navigation */}
@@ -131,7 +134,7 @@ export default function LandingPage() {
 
             {/* Quick Stats */}
             <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6">
-              {[
+              {[ 
                 { icon: Users, label: 'Active Users', value: '500K+', color: 'purple' },
                 { icon: Timer, label: 'Time Saved', value: '45%', color: 'pink' },
                 { icon: Globe, label: 'Cities', value: '28', color: 'blue' },
@@ -170,43 +173,13 @@ export default function LandingPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Clock,
-                title: "Real-time Updates",
-                description: "Get instant updates on traffic conditions and estimated relief times.",
-                color: "purple"
-              },
-              {
-                icon: MapPin,
-                title: "Smart Routing",
-                description: "AI-powered route optimization for the fastest path to your destination.",
-                color: "pink"
-              },
-              {
-                icon: Package,
-                title: "Quick Deliveries",
-                description: "Order food and essentials from nearby locations with smart routing.",
-                color: "orange"
-              },
-              {
-                icon: Car,
-                title: "Transport Options",
-                description: "Access various transport modes from bikes to car services.",
-                color: "blue"
-              },
-              {
-                icon: Shield,
-                title: "Emergency Services",
-                description: "Quick access to emergency assistance when you need it most.",
-                color: "red"
-              },
-              {
-                icon: Leaf,
-                title: "Eco Impact",
-                description: "Track and reduce your carbon footprint with green transport options.",
-                color: "green"
-              }
+            {[ 
+              { icon: Clock, title: "Real-time Updates", description: "Get instant updates on traffic conditions and estimated relief times.", color: "purple" },
+              { icon: MapPin, title: "Smart Routing", description: "AI-powered route optimization for the fastest path to your destination.", color: "pink" },
+              { icon: Package, title: "Quick Deliveries", description: "Order food and essentials from nearby locations with smart routing.", color: "orange" },
+              { icon: Car, title: "Transport Options", description: "Access various transport modes from bikes to car services.", color: "blue" },
+              { icon: Shield, title: "Emergency Services", description: "Quick access to emergency assistance when you need it most.", color: "red" },
+              { icon: Leaf, title: "Eco Impact", description: "Track and reduce your carbon footprint with green transport options.", color: "green" }
             ].map((feature, index) => (
               <div 
                 key={index} 
@@ -229,25 +202,16 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div>
               <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-                TrafficRelief
+                Dropify
               </Link>
               <p className="text-zinc-400 mt-4">
                 Making urban mobility smarter and more sustainable.
               </p>
             </div>
-            {[
-              {
-                title: "Product",
-                links: ["Features", "API", "Documentation"]
-              },
-              {
-                title: "Company",
-                links: ["About", "Blog", "Careers"]
-              },
-              {
-                title: "Legal",
-                links: ["Privacy", "Terms", "Security"]
-              }
+            {[ 
+              { title: "Product", links: ["Features", "API", "Documentation"] },
+              { title: "Company", links: ["About", "Blog", "Careers"] },
+              { title: "Legal", links: ["Privacy", "Terms", "Security"] }
             ].map((section) => (
               <div key={section.title}>
                 <h4 className="font-bold mb-4">{section.title}</h4>
@@ -269,7 +233,7 @@ export default function LandingPage() {
           </div>
           
           <div className="border-t border-zinc-800 pt-8 text-center text-zinc-400">
-            <p>© 2024 TrafficRelief. All rights reserved.</p>
+            <p>© 2024 Dropify. All rights reserved.</p>
           </div>
         </div>
       </footer>

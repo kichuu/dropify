@@ -1,9 +1,12 @@
-"use client"
-import React, { useState } from "react";
+'use client'
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Mail, Lock, ArrowRight,  } from "lucide-react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS for react-toastify
+
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
@@ -15,8 +18,20 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false); // For button loading state
   const router = useRouter();
 
-  // Request user location on component mount
-  
+  // Check if the user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        if (decodedToken) {
+          router.push("/dashboard"); // Redirect to dashboard if already logged in
+        }
+      } catch (err) {
+        console.error("Invalid token", err);
+      }
+    }
+  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,24 +52,22 @@ export default function LoginPage() {
 
       if (response.ok) {
         const data = await response.json();
-         // Decode the token to get the user ID
-         const decodedToken = jwtDecode(data.token);
-       
-
-         // Store the token and userId in localStorage
-         localStorage.setItem("token", data.token);
-        console.log(data)
-        alert("Login successful!");
-        // localStorage.setItem("token", data.token);
-        // localStorage.setItem("userId", data.id);
+        console.log(data);
+        // Decode the token to get the user ID
+        const decodedToken = jwtDecode(data.token);
+        // Store the token and userId in localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.id);
+        
+        toast.success("Login successful!"); // Success toast
         router.push("/dashboard"); // Redirect to dashboard
       } else {
         const error = await response.json();
-        alert(error.message || "Login failed");
+        toast.error(error.message || "Login failed"); // Error toast
       }
     } catch (err) {
       console.error(err);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again."); // Error toast
     } finally {
       setLoading(false); // Stop loading
     }
@@ -86,24 +99,16 @@ export default function LoginPage() {
                   placeholder="name@example.com"
                   required
                 />
-                <Mail
-                  className="absolute left-4 top-3.5 text-zinc-500"
-                  size={18}
-                />
+                <Mail className="absolute left-4 top-3.5 text-zinc-500" size={18} />
               </div>
             </div>
+
             {/* Password */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-sm font-medium text-zinc-400">
                   Password
                 </label>
-                <Link
-                  href="/auth/reset-password"
-                  className="text-sm text-purple-400 hover:text-purple-300"
-                >
-                  Forgot password?
-                </Link>
               </div>
               <div className="relative">
                 <input
@@ -115,12 +120,10 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                 />
-                <Lock
-                  className="absolute left-4 top-3.5 text-zinc-500"
-                  size={18}
-                />
+                <Lock className="absolute left-4 top-3.5 text-zinc-500" size={18} />
               </div>
             </div>
+
             {/* Role Selection */}
             <div>
               <label className="block text-sm font-medium text-zinc-400 mb-1.5">
@@ -134,9 +137,12 @@ export default function LoginPage() {
                 required
               >
                 <option value="user">User</option>
-                <option value="delivery">Delivery</option>
+                <option value="delivery" disabled>
+                  Partner (Coming Soon)
+                </option>
               </select>
             </div>
+
             {/* Sign In Button */}
             <button
               type="submit"
@@ -152,8 +158,21 @@ export default function LoginPage() {
               )}
             </button>
           </form>
+
+          {/* Sign Up Link */}
+          <div className="mt-4 text-center">
+            <p className="text-sm text-zinc-400">
+              Don't have an account?{" "}
+              <Link href="/auth/signup" className="text-purple-500 hover:underline">
+                Sign up
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 }

@@ -12,6 +12,7 @@ export interface IUser extends Document {
   };
   rewardPoints: number;
   carbonFootprintReduction: number;
+  greentip: number;
   password: string; // Add password field
   role: 'user'; // Add role field
 }
@@ -33,6 +34,8 @@ const userSchema = new Schema<IUser>({
   carbonFootprintReduction: { type: Number, default: 0 },
   password: { type: String, required: true }, // Make sure to require the password
   role: { type: String, default: 'user' }, // Set default role to 'user'
+  greentip: { type: Number, default: 0 }
+
 });
 
 const User = mongoose.model<IUser>('User', userSchema);

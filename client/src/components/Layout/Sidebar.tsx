@@ -1,15 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Navigation, Package, Bike, Brain, Briefcase, AlertCircle, Leaf, User, X, Menu } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Navigation, Package, Bike, Brain, AlertCircle, Leaf, X, Menu, UserIcon, LogOut } from 'lucide-react';
+import routes, { User } from "@/lib/api/routes";
 
 export const Sidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false); // Start with the sidebar closed on mobile
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Start with the sidebar closed on mobile
+  const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
+  const router = useRouter(); // To handle redirection
 
-  const routes = [
+  const route = [
     { icon: Navigation, label: 'Dashboard', href: '/dashboard' },
     { icon: Package, label: 'Deliveries', href: '/dashboard/deliveries' },
     { icon: Bike, label: 'Transport', href: '/dashboard/transport' },
@@ -18,7 +21,25 @@ export const Sidebar = () => {
     { icon: Leaf, label: 'Impact', href: '/dashboard/impact' },
   ];
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userId = localStorage.getItem('userId') ?? '';
+      if (userId) {
+        const userData = await routes.users.getById(userId);
+        setUser(userData);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  const handleLogout = () => {  
+    localStorage.removeItem('token'); // Remove token
+    localStorage.removeItem('userId'); // Remove userId
+    router.push('/'); // Redirect to home page
+  };
 
   return (
     <div
@@ -31,7 +52,7 @@ export const Sidebar = () => {
             href="/"
             className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent"
           >
-            Dropify
+            TrafficRelief
           </Link>
 
           {/* Hamburger button for mobile */}
@@ -41,7 +62,7 @@ export const Sidebar = () => {
         </div>
 
         <nav className="space-y-4 flex-1">
-          {routes.map(({ icon: Icon, label, href }) => (
+          {route.map(({ icon: Icon, label, href }) => (
             <Link
               key={href}
               href={href}
@@ -57,13 +78,24 @@ export const Sidebar = () => {
         <div className="pt-6 border-t border-zinc-800">
           <div className="flex items-center space-x-3 px-4 py-3">
             <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-600 flex items-center justify-center">
-              <User size={20} />
+              <UserIcon size={20} />
             </div>
             <div>
-              <p className="font-medium">Alex Chen</p>
-              <p className="text-sm text-zinc-400">Premium Member</p>
+              <p className="font-medium">{user?.name || 'Guest'}</p>
+              <p className="text-sm text-zinc-400">{user ? user.email : 'Not logged in'}</p>
             </div>
           </div>
+
+          {/* Logout Button */}
+          {user && (
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all hover:bg-white/5 mt-6"
+            >
+              <LogOut size={20} />
+              <span>Logout</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

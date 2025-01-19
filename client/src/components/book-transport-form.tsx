@@ -27,9 +27,9 @@ export default function BookTransportForm() {
   };
 
   const transportOptions = [
-    { type: 'Electric Bike', distance: '0.2 mi', time: '2 mins away', price: '$4.99', battery: '95%', icon: Bike },
-    { type: 'Electric Scooter', distance: '0.3 mi', time: '3 mins away', price: '$3.99', battery: '88%', icon: Zap },
-    { type: 'Premium Bike', distance: '0.4 mi', time: '4 mins away', price: '$5.99', battery: '100%', icon: Shield }
+    { type: 'Electric Bike', distance: '0.2 mi', time: '2 mins away', price: '$4.99', impact: '4kg', icon: Bike },
+    { type: 'Electric Scooter', distance: '0.3 mi', time: '3 mins away', price: '$3.99', impact: '5kg', icon: Zap },
+    { type: 'Premium Bike', distance: '0.4 mi', time: '4 mins away', price: '$5.99', impact: '0kg', icon: Shield }
   ];
 
   return (
@@ -108,7 +108,7 @@ export default function BookTransportForm() {
                           </div>
                           <div className="flex items-center">
                             <Zap size={16} className="mr-1" />
-                            {option.battery}
+                            {option.impact}
                           </div>
                         </div>
                       </div>

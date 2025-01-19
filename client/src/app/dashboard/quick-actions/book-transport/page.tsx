@@ -1,47 +1,132 @@
 "use client"
 
-import React, { useState } from 'react';
-import { Bike, MapPin, Clock, Zap, Shield } from 'lucide-react';
+import React, { useState, useEffect } from "react"
+import { Bike, MapPin, Clock, Shield, Leaf, Zap } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { toast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation'; // Import the useRouter hook
+import { useRouter } from "next/navigation"
+import routes from "@/lib/api/routes"
+import { useMapEvents } from "react-leaflet"
+import { toast } from "react-toastify"
+import dynamic from "next/dynamic"
+
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  { ssr: false }
+)
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.TileLayer),
+  { ssr: false }
+)
+const Marker = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Marker),
+  { ssr: false }
+)
 
 export default function BookTransportForm() {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const router = useRouter(); // Initialize the router
+  const [selectedOption, setSelectedOption] = useState<string | null>(null)
+  const [dropLocation, setDropLocation] = useState<{
+    lat: number
+    lng: number
+  } | null>(null)
+  const [currentLocation, setCurrentLocation] = useState<{
+    lat: number
+    lng: number
+  } | null>(null)
+  const router = useRouter()
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          })
+        },
+        (error) => {
+          console.error("Error fetching location:", error)
+          toast.error("Error fetching location. Defaulting to Seattle.")
+          setCurrentLocation({ lat: 47.6062, lng: -122.3321 }) // Default to Seattle
+        }
+      )
+    } else {
+      toast.error("Geolocation is not supported by this browser.")
+      setCurrentLocation({ lat: 47.6062, lng: -122.3321 }) // Default to Seattle
+    }
+  }, [])
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!dropLocation) {
+      console.log("ho", dropLocation)
+      toast.error("Please select a drop-off location.")
+      return
+    }
+
     if (selectedOption) {
-      // Find the selected option's data
-      const selectedVehicle = transportOptions.find(option => option.type === selectedOption);
+      const selectedVehicle = transportOptions.find(
+        (option) => option.type === selectedOption
+      )
       if (selectedVehicle) {
-        const { type, price } = selectedVehicle;
-  
-        // Navigate to the next page with the vehicle name and price in the query parameters
-        router.push(`book-transport/confirmation?name=${type}&price=${price}`);
-  
-        toast({
-          title: "Booking Confirmed",
-          description: `You've selected: ${selectedOption}`,
-        });
+        const { type, price } = selectedVehicle
+        let res
+        try {
+          res = await routes.transportRequests.create({
+            vehicleType: type,
+            dropOffLocation: dropLocation, // Pass as { lat, lng }
+          })
+          console.log("vehiclee", res)
+          toast.success("Transport request created successfully!")
+          router.push(`book-transport/confirmation?name=${type}&price=${price}`)
+        } catch (error) {
+          console.log("Error creating transport request:", error)
+          toast.error(`You already have an active rental`)
+        }
       }
     } else {
-      toast({
-        title: "Selection Required",
-        description: "Please select a transport option",
-        variant: "destructive",
-      });
+      toast.error("Please select a transport option.")
     }
-  };
+  }
 
   const transportOptions = [
-    { type: 'Electric Bike', distance: '0.2 mi', time: '2 mins away', price: '$4.99', battery: '95%', icon: Bike },
-    { type: 'Electric Scooter', distance: '0.3 mi', time: '3 mins away', price: '$3.99', battery: '88%', icon: Zap },
-    { type: 'Premium Bike', distance: '0.4 mi', time: '4 mins away', price: '$5.99', battery: '100%', icon: Shield }
-  ];
+    {
+      type: "Electric Bike",
+      distance: "0.2 mi",
+      time: "2 mins away",
+      price: "$4.99",
+      impact: "3kg",
+      icon: Bike,
+    },
+    {
+      type: "Electric Scooter",
+      distance: "0.3 mi",
+      time: "3 mins away",
+      price: "$3.99",
+      impact: "5kg",
+      icon: Zap,
+    },
+    {
+      type: "Premium Bike",
+      distance: "0.4 mi",
+      time: "4 mins away",
+      price: "$5.99",
+      impact: "1kg",
+      icon: Shield,
+    },
+  ]
+
+  const LocationSelector = () => {
+    useMapEvents({
+      click(e) {
+        setDropLocation({ lat: e.latlng.lat, lng: e.latlng.lng })
+      },
+    })
+    return dropLocation ? (
+      <Marker position={[dropLocation.lat, dropLocation.lng]}></Marker>
+    ) : null
+  }
 
   return (
     <div className="space-y-6">
@@ -52,24 +137,36 @@ export default function BookTransportForm() {
           </div>
           <div>
             <h2 className="text-2xl font-bold">Book Transport</h2>
-            <p className="text-zinc-400">Find and book available transport options</p>
+            <p className="text-zinc-400">
+              Find and book available transport options
+            </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="aspect-video rounded-lg bg-zinc-800 overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1556122071-e404eaedb7f8?auto=format&fit=crop&w=800&q=80"
-              alt="Transport Map"
-              className="w-full h-full object-cover"
-            />
+            {currentLocation && (
+              <MapContainer
+                center={[currentLocation.lat, currentLocation.lng]} // Center on user's location
+                zoom={13}
+                style={{ height: "100%", width: "100%" }}
+              >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <LocationSelector />
+                <Marker position={[currentLocation.lat, currentLocation.lng]} />
+              </MapContainer>
+            )}
           </div>
           <div className="space-y-4">
             <div className="bg-zinc-800/50 p-4 rounded-lg">
               <h3 className="font-bold mb-2">Current Location</h3>
               <div className="flex items-center space-x-2 text-zinc-400">
                 <MapPin size={20} />
-                <span>Downtown Seattle, 5th Avenue</span>
+                <span>
+                  {currentLocation
+                    ? `Lat: ${currentLocation.lat}, Lng: ${currentLocation.lng}`
+                    : "Fetching location..."}
+                </span>
               </div>
             </div>
             <div className="bg-zinc-800/50 p-4 rounded-lg">
@@ -89,7 +186,10 @@ export default function BookTransportForm() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <RadioGroup value={selectedOption || ""} onValueChange={setSelectedOption}>
+          <RadioGroup
+            value={selectedOption || ""}
+            onValueChange={setSelectedOption}
+          >
             <div className="space-y-4">
               {transportOptions.map((option) => (
                 <div key={option.type} className="relative">
@@ -118,8 +218,8 @@ export default function BookTransportForm() {
                             {option.time}
                           </div>
                           <div className="flex items-center">
-                            <Zap size={16} className="mr-1" />
-                            {option.battery}
+                            <Leaf size={16} className="mr-1" />
+                            {option.impact}
                           </div>
                         </div>
                       </div>
@@ -141,5 +241,5 @@ export default function BookTransportForm() {
         </form>
       </div>
     </div>
-  );
+  )
 }

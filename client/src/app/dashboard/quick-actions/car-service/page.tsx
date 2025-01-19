@@ -1,9 +1,35 @@
-import React from 'react';
-import { Car, MapPin, Clock, Shield, Star, Settings } from 'lucide-react';
+"use client"
+import React, { useState } from 'react';
+import { Car, MapPin, Shield, Star, Settings, X } from 'lucide-react';
+import { toast ,ToastContainer} from "react-toastify";
 
 export default function CarServicePage() {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  const handleBookClick = (service:any) => {
+    setSelectedService(service);
+    setModalOpen(true);
+  };
+
+  const handleModalSubmit = () => {
+    setModalOpen(false);
+    toast.success(`Thank you! Someone will contact you about ${selectedService} soon.`);
+    setPhoneNumber('');
+  };
+
   return (
     <div className="space-y-6">
+      <ToastContainer 
+        position="top-right"
+        autoClose={3000} 
+        hideProgressBar={false} 
+        closeOnClick 
+        pauseOnHover 
+        draggable 
+        theme="dark"
+      />
       <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
         <div className="flex items-center space-x-4 mb-6">
           <div className="p-3 bg-blue-500/20 rounded-lg">
@@ -32,7 +58,7 @@ export default function CarServicePage() {
             {
               title: 'Security',
               description: '24/7 monitored parking',
-              price: 'Included',
+              price: '$20/day',
               icon: Shield,
             },
           ].map((service) => (
@@ -46,13 +72,51 @@ export default function CarServicePage() {
               <p className="text-zinc-400 mb-4">{service.description}</p>
               <div className="flex items-center justify-between">
                 <span className="text-blue-400 font-bold">{service.price}</span>
-                <button className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors">
+                <button
+                  onClick={() => handleBookClick(service.title)}
+                  className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors"
+                >
                   Book
                 </button>
               </div>
             </div>
           ))}
         </div>
+
+        {/* Modal */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-zinc-900 p-6 rounded-lg w-full max-w-md border border-zinc-800">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">{selectedService}</h3>
+                <button onClick={() => setModalOpen(false)}>
+                  <X className="text-zinc-400 hover:text-zinc-200 transition-colors" size={24} />
+                </button>
+              </div>
+              <p className="text-zinc-400 mb-4">
+                Please enter your phone number so we can contact you for the service.
+              </p>
+              <input
+                type="tel"
+                placeholder="Enter your phone number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="w-full p-3 bg-zinc-800 rounded-lg mb-4 border border-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <button
+                onClick={handleModalSubmit}
+                disabled={!phoneNumber}
+                className={`w-full px-4 py-2 rounded-lg text-white ${
+                  phoneNumber
+                    ? 'bg-blue-500 hover:bg-blue-600'
+                    : 'bg-zinc-700 cursor-not-allowed'
+                } transition-colors`}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-zinc-800/50 rounded-lg p-6">
@@ -78,7 +142,10 @@ export default function CarServicePage() {
                   rating: 4.9,
                 },
               ].map((location) => (
-                <div key={location.name} className="flex items-center justify-between p-3 hover:bg-zinc-700/50 rounded-lg transition-colors">
+                <div
+                  key={location.name}
+                  className="flex items-center justify-between p-3 hover:bg-zinc-700/50 rounded-lg transition-colors"
+                >
                   <div>
                     <h4 className="font-medium">{location.name}</h4>
                     <div className="flex items-center space-x-4 text-sm text-zinc-400">
