@@ -37,12 +37,13 @@ export default function LoginPage() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         // Decode the token to get the user ID
         const decodedToken = jwtDecode(data.token);
-
         // Store the token and userId in localStorage
         localStorage.setItem("token", data.token);
-        console.log(data);
+        localStorage.setItem("userId", data.id);
+        
         toast.success("Login successful!"); // Success toast
         router.push("/dashboard"); // Redirect to dashboard
       } else {

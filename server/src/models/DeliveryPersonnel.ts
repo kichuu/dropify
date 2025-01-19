@@ -14,7 +14,7 @@ export interface IDeliveryPersonnel extends Document {
 
 const deliveryPersonnelSchema = new Schema<IDeliveryPersonnel>({
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true }, // Make email required and unique
+  email: { type: String, required: true, unique: false }, // Make email required and unique
   phoneNumber: { type: String, required: false }, // Make phone number required
   vehicleType: { type: String, required: false },
   currentLocation: {
@@ -27,7 +27,7 @@ const deliveryPersonnelSchema = new Schema<IDeliveryPersonnel>({
     enum: ['active', 'busy', 'offline'], // Restrict to specific values
     default: 'active', // Default status
   },
-  password: { type: String, required: true }, // Make password required
+  password: { type: String, required: false }, // Make password required
   role: { type: String, default: 'delivery' }, // Set default role to 'delivery'
 });
 

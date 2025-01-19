@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PlusCircle } from 'lucide-react';
 
 // Define types for items and order
@@ -17,6 +17,15 @@ interface OrderItem {
 export default function OrderFoodPage() {
   const [cart, setCart] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);  // To handle the loading state
+  const [userId, setUserId] = useState<string | null>(null);  // User ID state
+
+  // Fetch the userId from localStorage or another method based on your auth system
+  useEffect(() => {
+    const storedUserId = localStorage.getItem('userId'); // Or replace with your method of fetching the userId
+    if (storedUserId) {
+      setUserId(storedUserId);  // Update userId state if found
+    }
+  }, []);
 
   const items: MenuItem[] = [
     {
@@ -51,16 +60,21 @@ export default function OrderFoodPage() {
       return;
     }
 
+    if (!userId) {
+      alert('User is not logged in.');
+      return;
+    }
+
     setLoading(true);  // Start loading
 
     try {
       // Prepare order data based on the required API structure
       const orderData = {
-        userId: "USER_ID_HERE",  // Replace with the actual user ID
+        userId: userId,  // Use the userId from the state
         items: cart.map(item => item.name),  // Item names
       };
 
-      const response = await fetch('/api/orders', {
+      const response = await fetch('http://localhost:5050/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
