@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-interface IUser extends Document {
+export interface IUser extends Document {
   name: string;
   email: string;
   phoneNumber: string;
@@ -12,15 +12,17 @@ interface IUser extends Document {
   };
   rewardPoints: number;
   carbonFootprintReduction: number;
+  password: string; // Add password field
+  role: 'user'; // Add role field
 }
 
 const userSchema = new Schema<IUser>({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  phoneNumber: { type: String, required: true },
+  phoneNumber: { type: String, required: false },
   currentLocation: {
-    lat: { type: Number, required: true },
-    lng: { type: Number, required: true },
+    lat: { type: Number, required: false },
+    lng: { type: Number, required: false },
   },
   preferences: {
     food: { type: [String], default: [] },
@@ -29,6 +31,8 @@ const userSchema = new Schema<IUser>({
   },
   rewardPoints: { type: Number, default: 0 },
   carbonFootprintReduction: { type: Number, default: 0 },
+  password: { type: String, required: true }, // Make sure to require the password
+  role: { type: String, default: 'user' }, // Set default role to 'user'
 });
 
 const User = mongoose.model<IUser>('User', userSchema);

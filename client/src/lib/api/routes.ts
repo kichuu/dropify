@@ -86,20 +86,23 @@ const fetchAPI = async <T>(
   method: string = "GET",
   body?: object
 ): Promise<T> => {
+  const token = localStorage.getItem("token"); // Retrieve token from localStorage
+
   const response = await fetch(url, {
     method,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { authorization: `Bearer ${token}` } : {}), // Add token if it exists
     },
     body: body ? JSON.stringify(body) : undefined,
-  })
+  });
 
   if (!response.ok) {
-    throw new Error(`Error: ${response.statusText}`)
+    throw new Error(`Error: ${response.statusText}`);
   }
 
-  return response.json()
-}
+  return response.json();
+};
 
 const routes = {
   deliveryPersonnel: {

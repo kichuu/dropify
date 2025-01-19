@@ -5,6 +5,7 @@ import { Bell, Menu } from 'lucide-react';
 
 interface TopBarProps {
   currentLocation: string;
+  onMenuClick?: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({ currentLocation }) => {

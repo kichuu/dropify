@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 export const connectDB = async (): Promise< void> => {
     try {
         // MongoDB Connection
-        await mongoose.connect(process.env.MONGO_URI as string);
+        await mongoose.connect("mongodb+srv://krishnadevr07:xffVEo7iFq5lyMfd@cluster0.wc88p.mongodb.net/dropify?retryWrites=true&w=majority&appName=Cluster0");
         console.log('MongoDB connected');
 
         // PostgreSQL Connection

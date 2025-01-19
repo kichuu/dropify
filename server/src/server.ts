@@ -1,6 +1,18 @@
 import dotenv from 'dotenv';
-dotenv.config();
+import http from 'http';
 import app from './app';
+import socketSetup from './sockets';
 
-// Server already started in `app.ts`
-app
+dotenv.config();
+
+// Create HTTP server
+const server = http.createServer(app);
+
+// Socket.IO Setup
+socketSetup(server);
+
+// Start the server
+const PORT = process.env.PORT || 5050;
+server.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});

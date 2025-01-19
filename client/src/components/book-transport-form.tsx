@@ -6,34 +6,23 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { toast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation'; // Import the useRouter hook
 
 export default function BookTransportForm() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const router = useRouter(); // Initialize the router
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (selectedOption) {
-      // Find the selected option's data
-      const selectedVehicle = transportOptions.find(option => option.type === selectedOption);
-      if (selectedVehicle) {
-        const { type, price } = selectedVehicle;
-  
-        // Navigate to the next page with the vehicle name and price in the query parameters
-        router.push(`book-transport/confirmation?name=${type}&price=${price}`);
-  
-        toast({
-          title: "Booking Confirmed",
-          description: `You've selected: ${selectedOption}`,
-        });
-      }
+      toast({
+        title: "Booking Confirmed",
+        description: `You've selected: ${selectedOption}`,
+      })
     } else {
       toast({
         title: "Selection Required",
         description: "Please select a transport option",
         variant: "destructive",
-      });
+      })
     }
   };
 
@@ -134,7 +123,7 @@ export default function BookTransportForm() {
           </RadioGroup>
 
           <div className="mt-6">
-            <Button type="submit" className="w-full bg-green-700">
+            <Button type="submit" className="w-full">
               Book Now
             </Button>
           </div>
@@ -143,3 +132,4 @@ export default function BookTransportForm() {
     </div>
   );
 }
+
