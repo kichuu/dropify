@@ -38,7 +38,7 @@ export const Impact: React.FC = () => (
         <h3 className="text-xl font-bold mb-4">Impact History</h3>
         <div className="h-64 bg-zinc-800 rounded-lg overflow-hidden">
           <img
-            src="https://images.unsplash.com/photo-1623227413711-25ee4388dae3?auto=format&fit=crop&w=800&q=80"
+            src="https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             alt="Impact Graph"
             className="w-full h-full object-cover opacity-50"
           />

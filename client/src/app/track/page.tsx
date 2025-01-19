@@ -23,7 +23,7 @@ const TrackPage = () => {
   const [mapCenter, setMapCenter] = useState<LatLngExpression>([12.9716, 77.5946]); // Initial center at Bangalore
 
   useEffect(() => {
-    const socket = io('http://localhost:5050'); // Connect to your server's Socket.io
+    const socket = io('https://fsd-group-14-5418.onrender.com'); // Connect to your server's Socket.io
 
     // Listen for location updates
     socket.on('locationUpdate', (data: LocationData) => {

@@ -28,7 +28,7 @@ export default function DeliverySignup() {
     };
 
     try {
-      const response = await axios.post('http://localhost:5050/api/auth/register', deliveryData);
+      const response = await axios.post('https://fsd-group-14-5418.onrender.com/api/auth/register', deliveryData);
       alert('Delivery personnel registered successfully!');
       router.push('/auth/login'); // Redirect to login after successful registration
     } catch (error) {
