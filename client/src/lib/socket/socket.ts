@@ -5,7 +5,7 @@ let socket: Socket | null = null;
 
 export const initializeSocket = (): Socket => {
   if (!socket) {
-    socket = io("http://localhost:5050"); // Replace with your backend URL
+    socket = io("https://fsd-group-14-5418.onrender.com"); // Replace with your backend URL
     console.log("Socket connected to server");
   }
   return socket;
