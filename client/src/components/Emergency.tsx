@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import { AlertCircle, Heart, Car, Shield } from 'lucide-react';
 
@@ -22,19 +23,19 @@ export const Emergency: React.FC = () => (
           {[
             {
               service: 'Medical Assistance',
-              phone: '911',
+              phone: '102', // Indian number for Medical Assistance
               icon: Heart,
               color: 'text-red-400',
             },
             {
               service: 'Roadside Assistance',
-              phone: '800-555-0123',
+              phone: '1800-180-3030', // Example Indian roadside assistance number
               icon: Car,
               color: 'text-yellow-400',
             },
             {
               service: 'Police (Non-Emergency)',
-              phone: '800-555-0199',
+              phone: '100', // Indian police number
               icon: Shield,
               color: 'text-blue-400',
             },
@@ -46,10 +47,17 @@ export const Emergency: React.FC = () => (
                 </div>
                 <div>
                   <h4 className="font-medium">{contact.service}</h4>
-                  <p className="text-sm text-zinc-400">{contact.phone}</p>
+                  <p className="text-sm text-zinc-400">
+                    <a href={`tel:${contact.phone}`} className="hover:text-zinc-300">
+                      {contact.phone}
+                    </a>
+                  </p>
                 </div>
               </div>
-              <button className="px-4 py-2 bg-zinc-700/50 rounded-lg hover:bg-zinc-700 transition-colors">
+              <button
+                className="px-4 py-2 bg-zinc-700/50 rounded-lg hover:bg-zinc-700 transition-colors"
+                onClick={() => window.location.href = `tel:${contact.phone}`}
+              >
                 Call
               </button>
             </div>
@@ -61,7 +69,7 @@ export const Emergency: React.FC = () => (
         <h3 className="text-xl font-bold mb-4">Nearby Services</h3>
         <div className="aspect-video rounded-lg bg-zinc-800 overflow-hidden mb-4">
           <img
-            src="https://images.unsplash.com/photo-1584467541268-b040f83be3fd?auto=format&fit=crop&w=800&q=80"
+            src="https://images.unsplash.com/photo-1554734867-bf3c00a49371?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             alt="Emergency Services Map"
             className="w-full h-full object-cover opacity-75"
           />
