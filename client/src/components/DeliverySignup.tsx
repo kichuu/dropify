@@ -5,7 +5,6 @@ import { Mail, Lock, User, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
-
 export default function DeliverySignup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -44,6 +43,12 @@ export default function DeliverySignup() {
         <p className="text-zinc-400">Start your journey with Dropify</p>
       </div>
 
+      {/* Message about delivery signup being unavailable */}
+      <div className="text-center text-zinc-500 mb-6">
+        <p>Delivery signup is currently unavailable. Join the waitlist to be notified when it's available!</p>
+      </div>
+
+      {/* Disable the form and show the message */}
       <form className="space-y-6" onSubmit={handleSubmit}>
         {/* Name */}
         <div>
@@ -58,6 +63,7 @@ export default function DeliverySignup() {
               placeholder="John Doe"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              disabled
             />
             <User className="absolute left-4 top-3.5 text-zinc-500" size={18} />
           </div>
@@ -76,6 +82,7 @@ export default function DeliverySignup() {
               placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled
             />
             <Mail className="absolute left-4 top-3.5 text-zinc-500" size={18} />
           </div>
@@ -94,6 +101,7 @@ export default function DeliverySignup() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled
             />
             <Lock className="absolute left-4 top-3.5 text-zinc-500" size={18} />
           </div>
@@ -103,8 +111,9 @@ export default function DeliverySignup() {
         <button
           type="submit"
           className="w-full bg-purple-500 text-white rounded-lg px-4 py-3 font-medium hover:bg-purple-600 transition-colors flex items-center justify-center group"
+          disabled
         >
-          Create account
+          Coming Soon
           <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
         </button>
       </form>

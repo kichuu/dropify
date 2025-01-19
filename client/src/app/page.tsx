@@ -229,7 +229,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div>
               <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-                TrafficRelief
+                Dropify
               </Link>
               <p className="text-zinc-400 mt-4">
                 Making urban mobility smarter and more sustainable.
@@ -269,7 +269,7 @@ export default function LandingPage() {
           </div>
           
           <div className="border-t border-zinc-800 pt-8 text-center text-zinc-400">
-            <p>© 2024 TrafficRelief. All rights reserved.</p>
+            <p>© 2024 Dropify. All rights reserved.</p>
           </div>
         </div>
       </footer>

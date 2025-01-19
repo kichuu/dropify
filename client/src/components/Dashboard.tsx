@@ -1,5 +1,5 @@
   "use client"
-  import React, { useState } from "react"
+  import React, { useEffect, useState } from "react"
   import "leaflet/dist/leaflet.css"
   import {
     Timer,
@@ -97,6 +97,26 @@
       { time: "45m", level: 40 },
       { time: "60m", level: 30 },
     ]
+    const [userLocation, setUserLocation] = useState<string>("Fetching location...")
+
+    useEffect(() => {
+      // Fetch user location using Geolocation API
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords
+            setMapCenter([latitude, longitude])
+            setUserLocation(`Lat: ${latitude.toFixed(2)}, Lon: ${longitude.toFixed(2)}`)
+          },
+          (error) => {
+            console.error("Error fetching location:", error)
+            setUserLocation("Unable to fetch location")
+          }
+        )
+      } else {
+        setUserLocation("Geolocation not supported")
+      }
+    }, [])
 
     return (
       <>
@@ -226,25 +246,23 @@
 
           {/* Live Traffic Map */}
           <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-            <h3 className="text-xl font-bold mb-4">Live Traffic Map</h3>
-            <div className="relative">
-              <div className="aspect-video rounded-lg overflow-hidden">
-                <MapContainer
-                  center={mapCenter}
-                  zoom={13}
-                  style={{ height: "100%", width: "100%" }}
-                  className="rounded-lg"
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  />
-                  <Marker position={mapCenter} >
-                    <Popup>{currentLocation}</Popup>
-                  </Marker>
-                </MapContainer>
-              </div>
-            </div>
+        <h3 className="text-xl font-bold mb-4">Live Traffic Map</h3>
+        <div className="aspect-video rounded-lg overflow-hidden">
+          <MapContainer
+            center={mapCenter}
+            zoom={13}
+            style={{ height: "100%", width: "100%" }}
+            className="rounded-lg"
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            <Marker position={mapCenter}>
+              <Popup>{userLocation}</Popup>
+            </Marker>
+          </MapContainer>
+        </div>
           </div>
         </div>
 

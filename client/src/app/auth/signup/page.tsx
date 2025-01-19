@@ -3,6 +3,7 @@
 import DeliverySignup from '@/components/DeliverySignup';
 import UserSignup from '@/components/UserSignup';
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 export default function SignupPage() {
   const [isUserSignup, setIsUserSignup] = useState(true);
@@ -30,14 +31,23 @@ export default function SignupPage() {
                 : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
             }`}
           >
-            Delivery Signup
+            Partner Signup
           </button>
         </div>
 
         {/* Signup Forms */}
         {isUserSignup ? <UserSignup /> : <DeliverySignup />}
+
+        {/* Login Link */}
+        <div className="mt-4 text-center">
+          <p className="text-sm text-zinc-400">
+            Already have an account?{' '}
+            <Link href="/auth/login" className="text-purple-500 hover:underline">
+              Login
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
 }
-
