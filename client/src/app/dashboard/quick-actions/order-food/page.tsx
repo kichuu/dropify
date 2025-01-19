@@ -1,11 +1,11 @@
-"use client"
-import React, { useState, useEffect } from 'react';
-import { PlusCircle } from 'lucide-react';
+"use client";
+import React, { useState, useEffect } from "react";
+import { PlusCircle, Trash2 } from "lucide-react";
 
 // Define types for items and order
 interface MenuItem {
   name: string;
-  image: string;
+  description: string;
   price: number;
 }
 
@@ -16,36 +16,36 @@ interface OrderItem {
 
 export default function OrderFoodPage() {
   const [cart, setCart] = useState<OrderItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);  // To handle the loading state
-  const [userId, setUserId] = useState<string | null>(null);  // User ID state
+  const [loading, setLoading] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Fetch the userId from localStorage or another method based on your auth system
   useEffect(() => {
-    const storedUserId = localStorage.getItem('userId'); // Or replace with your method of fetching the userId
+    const storedUserId = localStorage.getItem("userId"); // Or replace with your method of fetching the userId
     if (storedUserId) {
-      setUserId(storedUserId);  // Update userId state if found
+      setUserId(storedUserId); // Update userId state if found
     }
   }, []);
 
   const items: MenuItem[] = [
     {
-      name: 'Cheeseburger',
-      image: 'https://images.unsplash.com/photo-1550317138-10000687a72b?auto=format&fit=crop&w=800&q=80',
+      name: "Cheeseburger",
+      description: "A delicious cheeseburger with fresh lettuce, tomato, and cheese.",
       price: 8.99,
     },
     {
-      name: 'Caesar Salad',
-      image: 'https://images.unsplash.com/photo-1559561852-1639d5c0e51e?auto=format&fit=crop&w=800&q=80',
+      name: "Caesar Salad",
+      description: "Crisp romaine lettuce, Parmesan cheese, and Caesar dressing.",
       price: 7.49,
     },
     {
-      name: 'Sushi Platter',
-      image: 'https://images.unsplash.com/photo-1546069901-eacef0df6022?auto=format&fit=crop&w=800&q=80',
+      name: "Sushi Platter",
+      description: "A variety of fresh sushi rolls served with soy sauce and wasabi.",
       price: 19.99,
     },
     {
-      name: 'Margherita Pizza',
-      image: 'https://images.unsplash.com/photo-1601924638867-3a3b7456d4d3?auto=format&fit=crop&w=800&q=80',
+      name: "Margherita Pizza",
+      description: "Classic pizza with fresh basil, mozzarella, and tomato sauce.",
       price: 12.49,
     },
   ];
@@ -54,30 +54,33 @@ export default function OrderFoodPage() {
     setCart((prev) => [...prev, { name: item.name, price: item.price }]);
   };
 
+  const removeFromCart = (index: number): void => {
+    setCart((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleOrder = async (): Promise<void> => {
     if (cart.length === 0) {
-      alert('Your cart is empty!');
+      alert("Your cart is empty!");
       return;
     }
 
     if (!userId) {
-      alert('User is not logged in.');
+      alert("User is not logged in.");
       return;
     }
 
-    setLoading(true);  // Start loading
+    setLoading(true);
 
     try {
-      // Prepare order data based on the required API structure
       const orderData = {
-        userId: userId,  // Use the userId from the state
-        items: cart.map(item => item.name),  // Item names
+        userId: userId,
+        items: cart.map((item) => item.name),
       };
 
-      const response = await fetch('http://localhost:5050/api/orders', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5050/api/orders", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(orderData),
       });
@@ -86,15 +89,15 @@ export default function OrderFoodPage() {
 
       if (response.ok) {
         alert(`Order placed successfully! Order ID: ${data.newOrder._id}`);
-        setCart([]);  // Clear the cart after successful order
+        setCart([]);
       } else {
-        alert(`Error placing order: ${data.error || 'Please try again later.'}`);
+        alert(`Error placing order: ${data.error || "Please try again later."}`);
       }
     } catch (error) {
-      console.error('Error placing order:', error);
-      alert('An error occurred while placing the order. Please try again.');
+      console.error("Error placing order:", error);
+      alert("An error occurred while placing the order. Please try again.");
     } finally {
-      setLoading(false);  // Stop loading
+      setLoading(false);
     }
   };
 
@@ -105,13 +108,18 @@ export default function OrderFoodPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {items.map((item) => (
-            <div key={item.name} className="bg-zinc-800/50 rounded-lg overflow-hidden">
-              <div className="aspect-video relative">
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+            <div
+              key={item.name}
+              className="bg-zinc-800/50 rounded-lg p-4 flex flex-col justify-between"
+            >
+              <div>
+                <h3 className="font-bold text-xl">{item.name}</h3>
+                <p className="text-zinc-400 mt-2">{item.description}</p>
               </div>
-              <div className="p-4">
-                <h3 className="font-bold">{item.name}</h3>
-                <p className="text-zinc-400">${item.price.toFixed(2)}</p>
+              <div className="mt-4">
+                <p className="text-lg font-semibold text-zinc-200">
+                  ${item.price.toFixed(2)}
+                </p>
                 <button
                   onClick={() => addToCart(item)}
                   className="mt-3 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 flex items-center space-x-2"
@@ -129,21 +137,34 @@ export default function OrderFoodPage() {
           {cart.length === 0 ? (
             <p className="text-zinc-400">Your cart is empty.</p>
           ) : (
-            <ul className="space-y-2">
+            <ul className="space-y-4">
               {cart.map((item, index) => (
-                <li key={index} className="flex justify-between">
-                  <span>{item.name}</span>
-                  <span>${item.price.toFixed(2)}</span>
+                <li
+                  key={index}
+                  className="flex justify-between items-center bg-zinc-700 p-3 rounded-lg"
+                >
+                  <span className="font-medium">{item.name}</span>
+                  <div className="flex items-center space-x-4">
+                    <span>${item.price.toFixed(2)}</span>
+                    <button
+                      onClick={() => removeFromCart(index)}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
           )}
           <button
             onClick={handleOrder}
-            className={`mt-4 px-4 py-2 ${loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-500'} text-white rounded-lg hover:bg-green-600`}
+            className={`mt-4 px-4 py-2 ${
+              loading ? "bg-gray-500 cursor-not-allowed" : "bg-green-500"
+            } text-white rounded-lg hover:bg-green-600`}
             disabled={loading}
           >
-            {loading ? 'Placing Order...' : 'Order Now'}
+            {loading ? "Placing Order..." : "Order Now"}
           </button>
         </div>
       </div>

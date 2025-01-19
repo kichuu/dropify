@@ -98,7 +98,7 @@ export default function ConfirmationPage() {
 
         <div className="flex flex-col space-y-3">
           <Link
-            href="/quick-actions/book-transport"
+            href="/dashboard/transport/"
             className="text-zinc-400 hover:text-white transition-colors"
           >
             Back to Transport Options
