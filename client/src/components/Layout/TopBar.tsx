@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Bell, Menu } from 'lucide-react';
+import React from "react";
+import { Bell, Menu } from "lucide-react";
 
 interface TopBarProps {
   currentLocation: string;
-  onMenuClick?: () => void;
+  toggleSidebar: () => void;
 }
 
-export const TopBar: React.FC<TopBarProps> = ({ currentLocation }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
-
+export const TopBar: React.FC<TopBarProps> = ({ currentLocation, toggleSidebar }) => {
   return (
     <header className="bg-zinc-900/50 backdrop-blur-lg border-b border-zinc-800 p-4">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
-        <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden">
+        {/* Mobile Sidebar Toggle Button */}
+        <button onClick={toggleSidebar} className="lg:hidden">
           <Menu size={24} />
         </button>
+
         <div className="flex items-center space-x-4">
           <button className="p-2 hover:bg-white/5 rounded-lg">
             <Bell size={20} />

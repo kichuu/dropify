@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import { Dashboard } from "@/components/Dashboard";
 import routes from "@/lib/api/routes";
@@ -46,7 +46,6 @@ export default function HomePage() {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      console.log(data.name)
       if (data.main) {
         setUserData((prev) => ({
           ...prev,
@@ -79,68 +78,64 @@ export default function HomePage() {
       }
     };
 
-    const fetchLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
+    const updateLocation = (position: GeolocationPosition) => {
+      const { latitude, longitude } = position.coords;
 
-            // Only emit if the coordinates have changed
-            if (
-              !lastLocation ||
-              lastLocation.latitude !== latitude ||
-              lastLocation.longitude !== longitude
-            ) {
-              setUserData((prev) => ({
-                ...prev,
-                currentLocation: `📍 Lat: ${latitude.toFixed(10)}, Lon: ${longitude.toFixed(10)}`,
-              }));
-
-              setLastLocation({ latitude, longitude });
-
-              // Fetch weather data based on the new location
-              fetchWeather(latitude, longitude);
-
-              // Log the new location
-              console.log(`New Location: Lat: ${latitude.toFixed(10)}, Lon: ${longitude.toFixed(10)}`);
-
-              const userId = localStorage.getItem("userId");
-              socket?.emit("location-update", { userId, latitude, longitude });
-            }
-          },
-          (error) => {
-            console.error("Geolocation error:", error);
-            setUserData((prev) => ({
-              ...prev,
-              currentLocation: "📍 Unable to fetch location",
-            }));
-          }
-        );
-      } else {
-        console.log("Geolocation not supported by browser");
+      // Only emit if the coordinates have changed
+      if (!lastLocation || lastLocation.latitude !== latitude || lastLocation.longitude !== longitude) {
         setUserData((prev) => ({
           ...prev,
-          currentLocation: "📍 Geolocation not supported",
+          currentLocation: `📍 Lat: ${latitude.toFixed(10)}, Lon: ${longitude.toFixed(10)}`,
         }));
+
+        setLastLocation({ latitude, longitude });
+
+        // Fetch weather data based on the new location
+        fetchWeather(latitude, longitude);
+
+        // Log the new location
+        console.log(`New Location: Lat: ${latitude.toFixed(10)}, Lon: ${longitude.toFixed(10)}`);
+
+        const userId = localStorage.getItem("userId");
+        socket?.emit("location-update", { userId, latitude, longitude });
       }
     };
 
-    const fetchData = async () => {
-      await fetchUserData();
-      setIsLoading(false);
+    const handleError = (error: GeolocationPositionError) => {
+      console.error("Geolocation error:", error);
+      setUserData((prev) => ({
+        ...prev,
+        currentLocation: "📍 Unable to fetch location",
+      }));
     };
 
-    fetchData();
+    // Start real-time location tracking
+    let watchId: number | null = null;
+    if (navigator.geolocation) {
+      watchId = navigator.geolocation.watchPosition(updateLocation, handleError, {
+        enableHighAccuracy: true,
+        maximumAge: 0, // No cached positions
+        timeout: 5000, // Timeout for getting position
+      });
+    } else {
+      console.log("Geolocation not supported by browser");
+      setUserData((prev) => ({
+        ...prev,
+        currentLocation: "📍 Geolocation not supported",
+      }));
+    }
 
-    // Fetch location every 10 seconds
-    const locationInterval = setInterval(() => {
-      fetchLocation();
-    }, 10000);
+    // Fetch user data
+    fetchUserData();
+    setIsLoading(false);
 
     return () => {
-      clearInterval(locationInterval);
+      // Stop tracking when component unmounts
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+      }
     };
-  }, [socket, lastLocation]); // Add lastLocation to dependency array
+  }, [socket, lastLocation]); // Depend on lastLocation to track changes
 
   if (isLoading) {
     return <div>Loading...</div>;

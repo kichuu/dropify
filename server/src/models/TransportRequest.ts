@@ -11,7 +11,7 @@ const transportRequestSchema = new Schema<ITransportRequest>({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   vehicleType: { type: String, required: true },
   dropOffLocation: {
-    lat: { type: Number, required: true },
+    lat: { type: Number, required: true },    
     lng: { type: Number, required: true },
   },
   vehicleStatus: { type: String, enum: ['pending', 'in transit', 'delivered'], default: 'pending' },
