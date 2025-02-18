@@ -245,7 +245,7 @@
           </div>
 
           {/* Live Traffic Map */}
-          <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+          <div className="bg-zinc-900 z-40 rounded-xl p-6 border border-zinc-800">
         <h3 className="text-xl font-bold mb-4">Live Traffic Map</h3>
         <div className="aspect-video rounded-lg overflow-hidden">
           <MapContainer

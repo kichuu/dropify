@@ -1,60 +1,34 @@
 "use client"
 import React, { useState, useEffect } from "react"
-import { Clock, Package, X } from 'lucide-react'
-import dynamic from "next/dynamic"
+import { Clock, Package, X } from "lucide-react"
+import mapboxgl from "mapbox-gl"
+import Map, { Marker, Source, Layer } from "react-map-gl"
+import "mapbox-gl/dist/mapbox-gl.css"
+import { PulsingDot, FadeInSection } from "@/components/ui/custom-components"
+import { motion, AnimatePresence } from "framer-motion"
 import routes from "@/lib/api/routes"
-import "leaflet/dist/leaflet.css"
-import { PulsingDot, FadeInSection } from '@/components/ui/custom-components'
-import { motion, AnimatePresence } from 'framer-motion'
 
-
-// Dynamically import the necessary components from react-leaflet
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
-)
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
-)
-const Marker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false }
-)
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
-  ssr: false,
-})
-
+mapboxgl.accessToken = "pk.eyJ1Ijoia3Jpc2huYWRldnIiLCJhIjoiY202Y2lzNGN5MDh6eTJ4cjJ4OGEwN2E1eCJ9.3Hqu6D2BE59rzEAQf_h0Ew"
 export default function Deliveries() {
-  const [mapCenter, setMapCenter] = useState<[number, number]>([51.505, -0.09]) // Default center
-  const [userLocation, setUserLocation] = useState<string>(
-    "Fetching location..."
-  )
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null)
   const [activeOrders, setActiveOrders] = useState<any[]>([])
   const [pastOrders, setPastOrders] = useState<any[]>([])
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null)
-  const [deliveryPersonLocation, setDeliveryPersonLocation] = useState<
-    any | null
-  >(null)
+  const [deliveryPersonLocation, setDeliveryPersonLocation] = useState<[number, number] | null>(null)
+  const [routeCoordinates, setRouteCoordinates] = useState<any[]>([])
 
-  // Fetch user's location on mount
+  // Fetch user's live location
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+      const watchId = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords
-          setMapCenter([latitude, longitude])
-          setUserLocation(
-            `Lat: ${latitude.toFixed(2)}, Lon: ${longitude.toFixed(2)}`
-          )
+          setUserLocation([longitude, latitude])
         },
-        (error) => {
-          console.error("Error fetching location:", error)
-          setUserLocation("Unable to fetch location")
-        }
+        (error) => console.error("Error fetching location:", error),
+        { enableHighAccuracy: true, maximumAge: 1000 }
       )
-    } else {
-      setUserLocation("Geolocation not supported by this browser.")
+      return () => navigator.geolocation.clearWatch(watchId)
     }
   }, [])
 
@@ -63,30 +37,25 @@ export default function Deliveries() {
     const fetchData = async () => {
       try {
         const activeOrdersData = await routes.orders.getAll()
-        const activeOrders = activeOrdersData.filter(
-          (order) => order.orderStatus === "pending"
-        )
+        const activeOrders = activeOrdersData.filter((order) => order.orderStatus === "pending")
         setActiveOrders(activeOrders)
 
-        const pastOrdersData = activeOrdersData.filter(
-          (order) => order.orderStatus === "delivered"
-        )
+        const pastOrdersData = activeOrdersData.filter((order) => order.orderStatus === "delivered")
         setPastOrders(pastOrdersData)
       } catch (error) {
         console.error("Error fetching data:", error)
       }
     }
-
     fetchData()
   }, [])
 
-  // Fetch the delivery person's location when an order is clicked
+  // Fetch the delivery person's location when an order is selected
   useEffect(() => {
     if (selectedOrder && selectedOrder.deliveryPersonId) {
       const fetchDeliveryPersonLocation = async () => {
         try {
           const deliveryPerson = await selectedOrder.deliveryPersonId
-          setDeliveryPersonLocation(deliveryPerson.currentLocation)
+          setDeliveryPersonLocation([deliveryPerson.currentLocation.lng, deliveryPerson.currentLocation.lat])
         } catch (error) {
           console.error("Error fetching delivery person location:", error)
         }
@@ -94,11 +63,29 @@ export default function Deliveries() {
       fetchDeliveryPersonLocation()
     }
   }, [selectedOrder])
-  // Handle order click
+
   const handleOrderClick = (orderId: string) => {
     const order = activeOrders.find((order) => order._id === orderId)
     setSelectedOrder(order)
   }
+
+  // Fetch route between user and delivery person using Mapbox Directions API
+  useEffect(() => {
+    const fetchRoute = async () => {
+      if (!userLocation || !deliveryPersonLocation) return
+
+      const routeUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${userLocation[0]},${userLocation[1]};${deliveryPersonLocation[0]},${deliveryPersonLocation[1]}?access_token=${mapboxgl.accessToken}&geometries=geojson`
+      const response = await fetch(routeUrl)
+      const data = await response.json()
+
+      if (data.routes.length > 0) {
+        const route = data.routes[0].geometry.coordinates
+        setRouteCoordinates(route)
+      }
+    }
+
+    fetchRoute()
+  }, [userLocation, deliveryPersonLocation])
 
   return (
     <div className="min-h-screen bg-zinc-900 text-white">
@@ -174,61 +161,71 @@ export default function Deliveries() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
               >
                 <motion.div
                   initial={{ scale: 0.9, y: 20 }}
                   animate={{ scale: 1, y: 0 }}
                   exit={{ scale: 0.9, y: 20 }}
-                  className="bg-zinc-800/90 p-6 rounded-2xl max-w-2xl w-full shadow-2xl border border-zinc-600"
+                  className="bg-zinc-800/90 p-4 sm:p-6 rounded-2xl max-w-full sm:max-w-2xl w-[90%] sm:w-full shadow-2xl border border-zinc-600"
                 >
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-3xl font-bold text-purple-300">Order Details</h2>
-                    <button
-                      onClick={() => setSelectedOrder(null)}
-                      className="text-zinc-400 hover:text-white transition-colors"
-                    >
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-4 sm:mb-6">
+                    <h2 className="text-xl sm:text-3xl font-bold text-purple-300">Order Details</h2>
+                    <button onClick={() => setSelectedOrder(null)} className="text-zinc-400 hover:text-white transition-colors">
                       <X size={24} />
                     </button>
                   </div>
-                  <div className="space-y-4 mb-6">
-                    <p className="font-medium text-lg">Order ID: <span className="text-purple-300">#{selectedOrder._id}</span></p>
-                    <p className="font-medium text-lg">Items: <span className="text-zinc-300">{selectedOrder.items.join(", ")}</span></p>
-                    <p className="font-medium text-lg">Status: <span className="text-green-400">{selectedOrder.orderStatus}</span></p>
-                    <p className="font-medium text-lg">
-                      Estimated Delivery:{" "}
-                      <span className="text-purple-300">
-                        {new Date(selectedOrder.estimatedDeliveryTime).toLocaleTimeString()}
-                      </span>
-                    </p>
+
+                  {/* Order Details */}
+                  <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+                    <p className="font-medium text-base sm:text-lg">Order ID: <span className="text-purple-300">#{selectedOrder._id}</span></p>
+                    <p className="font-medium text-base sm:text-lg">Items: <span className="text-zinc-300">{selectedOrder.items.join(", ")}</span></p>
+                    <p className="font-medium text-base sm:text-lg">Status: <span className="text-green-400">{selectedOrder.orderStatus}</span></p>
+                    <p className="font-medium text-base sm:text-lg">Estimated Delivery: <span className="text-purple-300">{new Date(selectedOrder.estimatedDeliveryTime).toLocaleTimeString()}</span></p>
                   </div>
 
-                  {/* Displaying map in modal */}
-                  <div className="aspect-video rounded-xl overflow-hidden mt-6 border border-zinc-600 shadow-lg">
-                    <MapContainer
-                      center={mapCenter}
-                      zoom={13}
+                  {/* Mapbox Map */}
+                  <div className="h-64 sm:h-[350px] md:h-[400px] rounded-xl overflow-hidden mt-4 sm:mt-6 border border-zinc-600 shadow-lg">
+                    <Map
+                      initialViewState={{
+                        longitude: userLocation?.[0] || 0,
+                        latitude: userLocation?.[1] || 0,
+                        zoom: 13,
+                      }}
                       style={{ height: "100%", width: "100%" }}
-                      className="rounded-xl"
+                      mapStyle="mapbox://styles/mapbox/streets-v11"
+                      mapboxAccessToken={mapboxgl.accessToken || ""}
                     >
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      />
-                      <Marker position={mapCenter}>
-                        <Popup>{userLocation}</Popup>
-                      </Marker>
-                      {deliveryPersonLocation && (
-                        <Marker
-                          position={[
-                            deliveryPersonLocation.lat,
-                            deliveryPersonLocation.lng,
-                          ]}
-                        >
-                          <Popup>Delivery Personnel</Popup>
+                      {/* User Location Marker */}
+                      {userLocation && (
+                        <Marker longitude={userLocation[0]} latitude={userLocation[1]}>
+                          <div className="w-3 h-3 sm:w-4 sm:h-4 bg-blue-500 rounded-full animate-pulse"></div>
                         </Marker>
                       )}
-                    </MapContainer>
+
+                      {/* Delivery Person Marker */}
+                      {deliveryPersonLocation && (
+                        <Marker longitude={deliveryPersonLocation[0]} latitude={deliveryPersonLocation[1]}>
+                          <div className="w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded-full animate-bounce"></div>
+                        </Marker>
+                      )}
+
+                      {/* Route Layer */}
+                      {routeCoordinates.length > 0 && (
+                        <Source type="geojson" data={{ type: "Feature", geometry: { type: "LineString", coordinates: routeCoordinates } }}>
+                          <Layer
+                            id="route"
+                            type="line"
+                            paint={{
+                              "line-color": "#ff0000",
+                              "line-width": 4,
+                              "line-opacity": 0.75
+                            }}
+                          />
+                        </Source>
+                      )}
+                    </Map>
                   </div>
                 </motion.div>
               </motion.div>
@@ -239,4 +236,3 @@ export default function Deliveries() {
     </div>
   )
 }
-
