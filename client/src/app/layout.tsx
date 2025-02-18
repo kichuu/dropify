@@ -8,6 +8,9 @@ import { ToastContainer } from "react-toastify";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+       <head>
+        <title>Dropify</title>
+      </head>
       <body>
         <SocketProvider>{children}</SocketProvider>
         <ToastContainer />
