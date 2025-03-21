@@ -29,7 +29,7 @@ export default function LoginPage() {
     setLoading(true); // Start loading
     console.log("Form Data Submitted:", formData);
     try {
-      const response = await fetch("https://fsd-group-14-5418.onrender.com/api/auth/login", {
+      const response = await fetch("https://dropify-vuh2.onrender.com/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
