@@ -1,7 +1,7 @@
 const API_BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "https://dropify-vuh2.onrender.com/api" // Production API URL
-    : "https://dropify-vuh2.onrender.com/api"
+    ? "https://dropify-1.onrender.com/api" // Production API URL
+    : "https://dropify-1.onrender.com/api"
 // Define types for each model
 type DeliveryPersonnel = {
   id: string

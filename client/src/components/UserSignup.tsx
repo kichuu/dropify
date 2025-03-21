@@ -34,7 +34,7 @@ export default function UserSignup() {
     };
 
     try {
-      const response = await axios.post('https://dropify-vuh2.onrender.com/api/auth/register', userData);
+      const response = await axios.post('https://dropify-1.onrender.com/api/auth/register', userData);
       alert('User registered successfully!');
       router.push('/auth/login'); // Redirect to login after successful registration
     } catch (error) {

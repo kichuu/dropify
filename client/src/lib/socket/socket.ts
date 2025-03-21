@@ -5,7 +5,7 @@ let socket: Socket | null = null;
 
 export const initializeSocket = (): Socket => {
   if (!socket) {
-    socket = io("https://dropify-vuh2.onrender.com"); // Replace with your backend URL
+    socket = io("https://dropify-1.onrender.com"); // Replace with your backend URL
     console.log("Socket connected to server");
   }
   return socket;

@@ -27,7 +27,7 @@ export default function DeliverySignup() {
     };
 
     try {
-      const response = await axios.post('https://dropify-vuh2.onrender.com/api/auth/register', deliveryData);
+      const response = await axios.post('https://dropify-1.onrender.com/api/auth/register', deliveryData);
       alert('Delivery personnel registered successfully!');
       router.push('/auth/login'); // Redirect to login after successful registration
     } catch (error) {
