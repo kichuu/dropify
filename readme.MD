@@ -1,8 +1,8 @@
-# Traffic Relief Dashboard
+# Dropify - Traffic Relief Dashboard
 
 ## Overview
 
-The **Traffic Relief Dashboard** is a revolutionary platform designed to provide innovative solutions for individuals stuck in traffic. By combining real-time delivery services, transportation options, and intelligent assistance, the dashboard enhances user convenience and productivity, transforming frustrating traffic jams into manageable and productive experiences.
+**Dropify - Traffic Relief Dashboard** is a revolutionary platform designed to provide innovative solutions for individuals stuck in traffic. By combining real-time delivery services, transportation options, and intelligent assistance, Dropify enhances user convenience and productivity, transforming frustrating traffic jams into manageable experiences.
 
 ---
 
@@ -27,25 +27,18 @@ The **Traffic Relief Dashboard** is a revolutionary platform designed to provide
 ### **3. AI-Powered Smart Assistance**
 
 - **Predicted Traffic Relief Time:**
-  - AI analyzes traffic patterns and provides an estimated time for when congestion will clear, helping users make informed decisions.
+  - Integrated **Google Gemini AI** provides estimated times for when congestion will clear, helping users make informed decisions.
 - **Route Optimization:**
-  - Suggests alternate routes or nearby safe spots (e.g., parks or cafes) where users can wait comfortably.
+  - Suggests alternate routes or nearby safe spots where users can wait comfortably.
 
-### **4. Integrated Productivity Hub**
-
-- **Remote Work on the Go:**
-  - Offers access to virtual meeting links, productivity tools, and workspaces to make the most of the waiting time.
-- **Entertainment Options:**
-  - Curates personalized content recommendations (music, audiobooks, or podcasts) based on user preferences.
-
-### **5. Emergency Support**
+### **4. Emergency Support**
 
 - **Medical Assistance:**
   - Allows users to book medical help or minor first-aid deliveries in case of an emergency.
 - **Vehicle Breakdown Assistance:**
   - Users can request immediate mechanical help if their vehicle breaks down in traffic.
 
-### **6. Social Impact Features**
+### **5. Social Impact Features**
 
 - **Eco-Friendly Incentives:**
   - Encourages users to opt for bicycles or scooters by rewarding them with points redeemable for discounts on future services.
@@ -62,27 +55,24 @@ The **Traffic Relief Dashboard** is a revolutionary platform designed to provide
 
 1. **User Registration:**
    - Sign up with your email or social media accounts.
-   - Customize your preferences for delivery, transport, and entertainment options.
-
+   - Customize your preferences for delivery, transport, and AI assistance options.
 2. **Real-Time Updates:**
    - Access live traffic data and personalized service recommendations.
-
 3. **Service Selection:**
    - Choose from delivery, transport, or emergency assistance services based on your current needs.
-
 4. **AI-Driven Assistance:**
-   - Let the app’s AI provide insights and optimize your experience with smart suggestions.
+   - Get AI-generated insights and optimized suggestions for traffic relief.
 
 ---
 
 ## Technologies Used
 
-- **Frontend:** React, Next.js, Tailwind CSS
-- **Backend:** Node.js, Express, MongoDB
-- **AI & Machine Learning:** TensorFlow, Python
-- **Real-Time Tracking:** Google Maps API, WebSockets
-- **Authentication:** JWT, OAuth 2.0
-- **Deployment:** Vercel, Docker
+- **Frontend:** TypeScript, Next.js, Leaflet, Mapbox
+- **Backend:** Node.js, Express, MongoDB, Socket.io
+- **AI Integration:** Google Gemini API (basic AI assistance, no custom training)
+- **Real-Time Tracking:** Mapbox API, DistanceMatrix API, WebSockets
+- **Authentication:** JWT
+- **Deployment:** Frontend on Vercel, Backend on Render
 
 ---
 
@@ -138,17 +128,16 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For any questions or suggestions, feel free to contact us:
 
-- **Email:** support@trafficreliefdashboard.com
-- **GitHub Issues:** [GitHub Issues Page](https://github.com/yourusername/traffic-relief-dashboard/issues)
+- **Email:** support@dropify.com
+- **GitHub Issues:** [GitHub Issues Page](https://github.com/kichuu/dropify/issues)
 
 ---
 
 ## Links
 
-- **Deployed Application:** [Traffic Relief Dashboard](https://fsd-group-14-5418.vercel.app/)
-- **Presentation:** [Google Drive](https://drive.google.com/file/d/1q1hVFQSRpvuVZmu6ksvoAii-zD_7JNsR/view?usp=sharing)
+- **Deployed Application:** [Dropify - Traffic Relief Dashboard](https://dropify-alpha.vercel.app/)
 
 ---
 
-Transform your traffic experience with the **Traffic Relief Dashboard**!
+Transform your traffic experience with **Dropify - Traffic Relief Dashboard**! 🚗⚡
 
