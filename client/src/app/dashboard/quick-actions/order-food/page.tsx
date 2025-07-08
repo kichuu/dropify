@@ -77,7 +77,7 @@ export default function OrderFoodPage() {
         items: cart.map((item) => item.name),
       };
 
-      const response = await fetch("https://dropify-1.onrender.com/api/orders", {
+      const response = await fetch("https://dropify-6tks.onrender.com/api/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -29,7 +29,7 @@ export default function LoginPage() {
     setLoading(true); // Start loading
     console.log("Form Data Submitted:", formData);
     try {
-      const response = await fetch("https://dropify-1.onrender.com/api/auth/login", {
+      const response = await fetch("https://dropify-6tks.onrender.com/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
